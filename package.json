@@ -19,16 +19,13 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
-    "async": "^2.6.0",
-    "exp-config": "^2.0.1",
-    "pg": "^7.4.1",
-    "uuid": "^3.2.1"
+    "continuation-local-storage": "^3.2.1",
+    "winston": "^2.4.0"
   },
   "devDependencies": {
-    "assert": "^1.4.1",
     "chai": "^3.5.0",
     "eslint": "^4.18.0",
-    "istanbul": "^0.4.5",
+    "intercept-stdout": "^0.1.2",
     "mocha": "^3.1.2",
     "mocha-cakes-2": "^2.0.1"
   }

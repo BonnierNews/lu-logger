@@ -1,6 +1,5 @@
 "use strict";
 
+const logger = require("./lib/logger");
 
-module.exports = {
-
-};
+module.exports = logger;

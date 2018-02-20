@@ -13,7 +13,8 @@ Feature("Logging", () => {
 
     const config = {
       "log": "stdout",
-      "logLevel": "debug"
+      "logLevel": "debug",
+      "logJson": true
     };
     const message = "Message";
     const corrId = "sample-correlation-id";

@@ -1,13 +1,10 @@
 "use strict";
 
-const continuationLocalStorage = require("continuation-local-storage");
+const createLogger = require("../../lib/logger");
 const intercept = require("intercept-stdout");
 
-const constants = require("../../lib/constants");
-
 Feature("Logging", () => {
-  Scenario("Initializing the logger and doing some logging", () => {
-    let logger;
+  Scenario("Logging with JSON format", () => {
     let unhook;
     let stdoutContents = "";
 
@@ -17,35 +14,72 @@ Feature("Logging", () => {
       "logJson": true
     };
     const message = "Message";
-    const corrId = "sample-correlation-id";
-    const data = {data: "meta-data"};
+    const data = {
+      "meta": {
+        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+        "correlationId": "sample-correlation-id"
+      }
+    };
 
-    Given("some options", () => {
-      config.should.be.an("object");
-    });
+    When("initializing the logger and doing some JSON logging", () => {
+      const logger = createLogger(config);
 
-    When("initializing the logger and doing some logging", () => {
-      logger = require("../../lib/logger")(config);
-
-      const namespace = continuationLocalStorage.createNamespace(constants.namespace);
-      namespace.run(() => {
-        namespace.set("correlationId", corrId);
-
-        unhook = intercept((txt) => {
-          stdoutContents += txt;
-        });
-
-        logger.debug(message, data);
-
-        unhook();
+      unhook = intercept((txt) => {
+        stdoutContents += txt;
       });
+
+      logger.debug(message, data);
+
+      unhook();
     });
 
-    Then("correlation id should be output in the log", () => {
+    Then("log output should be JSON", () => {
       const logContent = JSON.parse(stdoutContents.trim());
-      logContent.data.should.deep.equal(data);
-      logContent.greenFieldLogMeta.correlationId.should.equal(corrId);
+      logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(message);
+    });
+  });
+
+  Scenario("Logging with string format", () => {
+    let unhook;
+    let stdoutContents = "";
+
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": false
+    };
+    const message = "Message";
+    const data = {
+      "meta": {
+        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+        "correlationId": "sample-correlation-id"
+      }
+    };
+
+    When("initializing the logger and doing some string logging", () => {
+      const logger = createLogger(config);
+
+      unhook = intercept((txt) => {
+        stdoutContents += txt;
+      });
+
+      logger.debug(message, data);
+
+      unhook();
+    });
+
+    Then("log output should be string", (done) => {
+      stdoutContents.should.be.a("string");
+
+      try {
+        JSON.parse(stdoutContents);
+        done("No error thrown");
+      } catch (err) {
+        done();
+      }
     });
   });
 });

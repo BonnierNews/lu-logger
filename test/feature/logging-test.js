@@ -93,6 +93,10 @@ Feature("Logging", () => {
     };
     const message = "Message";
 
+    before(() => {
+      prometheusClient.register.resetMetrics();
+    });
+
     When("initializing the logger and doing some string logging", () => {
       const logger = createLogger(config);
 
@@ -125,8 +129,7 @@ Feature("Logging", () => {
 
     Then("the logCounter metric should be incremented", () => {
 
-      const counterMetric = prometheusClient.register.getSingleMetric(`${config.metricPrefix}_logged_total`);
-
+      const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
       const emergencyCount = counterMetric.hashMap["level:emergency"].value;
       const alertCount = counterMetric.hashMap["level:alert"].value;
       const criticalCount = counterMetric.hashMap["level:crit"].value;

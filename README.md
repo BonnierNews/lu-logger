@@ -17,16 +17,9 @@ const logger = require("lu-logger")({
 ```
 ### Metrics
 All log events will also increment a counter `<metricPrefix>_logged_total` with the level as label.
-The `metricPrefix` should be passed in as a param in the configuration object.
+The `metricPrefix` will be automatically resolved from the calling applications `name` in package.json.
+If there is no `name` in package.json the `metricPrefix` will be `undefined`;
 
-```js
-const logger = require("lu-logger")({
-  "log": "stdout",      // Or file, required
-  "logLevel": "debug",  // Minimum level to log
-  "logJson": true,       // Log JSON objects or string messages, defaults to true
-  "metricPrefix": "myapi"
-});
-```
 
 Example of metrics produced:
 

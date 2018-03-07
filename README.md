@@ -15,6 +15,29 @@ const logger = require("lu-logger")({
   "logJson": true       // Log JSON objects or string messages, defaults to true
 });
 ```
+### Metrics
+All log events will also increment a counter `<metricPrefix>_logged_total` with the level as label.
+The `metricPrefix` should be passed in as a param in the configuration object.
+
+```js
+const logger = require("lu-logger")({
+  "log": "stdout",      // Or file, required
+  "logLevel": "debug",  // Minimum level to log
+  "logJson": true,       // Log JSON objects or string messages, defaults to true
+  "metricPrefix": "myapi"
+});
+```
+
+Example of metrics produced:
+
+```
+# HELP orderapi_logged_total Counts number of logs with loglevel as label
+# TYPE orderapi_logged_total counter
+orderapi_logged_total{level="info"} 28
+orderapi_logged_total{level="error"} 39
+orderapi_logged_total{level="debug"} 2
+```
+
 
 ### Log output mode
 When log mode `file` is enabled, the log will be written to a file at `<app root>/logs/<NODE_ENV>.log` directory, where `app root` is the folder containing the `package.json` file.

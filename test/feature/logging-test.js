@@ -115,6 +115,12 @@ Feature("Logging", () => {
       logger.warning(message);
       logger.warning(message);
       logger.warning(message);
+
+      logger.notice(message);
+
+      logger.info(message);
+
+      logger.debug(message);
     });
 
     Then("the logCounter metric should be incremented", () => {
@@ -126,12 +132,18 @@ Feature("Logging", () => {
       const criticalCount = counterMetric.hashMap["level:crit"].value;
       const errorCount = counterMetric.hashMap["level:error"].value;
       const warningCount = counterMetric.hashMap["level:warning"].value;
+      const noticeCount = counterMetric.hashMap["level:notice"].value;
+      const infoCount = counterMetric.hashMap["level:info"].value;
+      const debugCount = counterMetric.hashMap["level:debug"].value;
 
       emergencyCount.should.eql(1);
       alertCount.should.eql(2);
       criticalCount.should.eql(3);
       errorCount.should.eql(4);
       warningCount.should.eql(5);
+      noticeCount.should.eql(1);
+      infoCount.should.eql(1);
+      debugCount.should.eql(1);
     });
   });
 });

@@ -6,7 +6,7 @@
     "Jens-Peter Olsson",
     "Ivan Malmberg"
   ],
-  "version": "1.1.4",
+  "version": "1.2.0",
   "scripts": {
     "test": "node_modules/.bin/mocha",
     "posttest": "eslint --cache ."
@@ -19,7 +19,8 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
-    "winston": "^2.4.0"
+    "winston": "^2.4.0",
+    "prom-client": "^10.2.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",

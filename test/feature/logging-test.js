@@ -37,6 +37,8 @@ Feature("Logging", () => {
 
     Then("log output should be JSON", () => {
       const logContent = JSON.parse(stdoutContents.trim());
+      logContent.logLevel.should.equal("debug");
+      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(message);
     });

@@ -2,7 +2,6 @@
 [![Build Status](https://travis-ci.org/BonnierNews/lu-logger.svg?branch=master)](https://travis-ci.org/BonnierNews/lu-logger)
 
 ## Purpose and features
-An extended logging library which uses [continuation-local-storage](https://www.npmjs.com/package/continuation-local-storage) to extract `correlationId` from the context and print it in the log.
 File name and line number of the log caller is also added when logging in debug level.
 
 ## Configuration

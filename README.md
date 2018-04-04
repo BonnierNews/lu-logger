@@ -7,6 +7,7 @@ File name and line number of the log caller is also added when logging in debug 
 ## Configuration
 A configuration object must be passed to the constructor when initiating the logger.
 
+
 ### Example
 ```js
 const logger = require("lu-logger")({

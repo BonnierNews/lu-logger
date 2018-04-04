@@ -53,5 +53,3 @@ The JSON below is an example of a log entry when `logJson` is set to true (or om
   "timestamp": "2018-02-21T12:22:19.150Z"
 }
 ```
-
-# Notes

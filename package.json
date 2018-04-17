@@ -20,8 +20,9 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "prom-client": "^10.2.2",
     "winston": "^2.4.0",
-    "prom-client": "^10.2.2"
+    "winston-syslog": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

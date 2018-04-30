@@ -5,6 +5,7 @@ const winston = require("winston");
 const path = require("path");
 require("winston-syslog").Syslog; // eslint-disable-line no-unused-expressions
 
+const fooTransport = require("./lib/transports");
 const PromTransport = require("./lib/prom-transport");
 const callingAppName = require(`${process.cwd()}/package.json`).name;
 const config = appConfig.logging;
@@ -18,7 +19,7 @@ if (appConfig.envName === "test") {
 if (config.log === "file") {
   const fileName = path.join(process.cwd(), "logs", `${appConfig.envName}.log`);
   const options = config.truncateLog ? { flags: "w" } : { flags: "a" };
-  transports.push(new winston.transports.File({
+  transports.push(new fooTransport({
     filename: fileName,
     json: config.logJson,
     options: options,

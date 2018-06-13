@@ -5,7 +5,7 @@ const intercept = require("intercept-stdout");
 const prometheusClient = require("prom-client");
 
 Feature("Logging", () => {
-  Scenario("Logging with JSON format", () => {
+  Scenario("Logging debug with JSON format", () => {
     let unhook;
     let stdoutContents = "";
 
@@ -38,6 +38,45 @@ Feature("Logging", () => {
     Then("log output should be JSON", () => {
       const logContent = JSON.parse(stdoutContents.trim());
       logContent.logLevel.should.equal("debug");
+      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal(message);
+    });
+  });
+
+  Scenario("Logging error with JSON format", () => {
+    let unhook;
+    let stdoutContents = "";
+
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": true
+    };
+    const message = "Message";
+    const data = {
+      "meta": {
+        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+        "correlationId": "sample-correlation-id"
+      }
+    };
+
+    When("initializing the logger and doing some JSON logging", () => {
+      const logger = createLogger(config);
+
+      unhook = intercept((txt) => {
+        stdoutContents += txt;
+      });
+
+      logger.error(message, data);
+
+      unhook();
+    });
+
+    Then("log output should be JSON", () => {
+      const logContent = JSON.parse(stdoutContents.trim());
+      logContent.logLevel.should.equal("error");
       logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(message);

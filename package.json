@@ -24,9 +24,6 @@
     "winston": "^2.4.0",
     "winston-syslog": "^1.0.0"
   },
-  "resolutions": {
-    "winston-syslog/unix-dgram": "2.0.2"
-  },
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^4.19.1",

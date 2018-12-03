@@ -231,4 +231,33 @@ Feature("Logging", () => {
       debugCount.should.eql(1);
     });
   });
+
+  Scenario("Logging error with routingKey in logObject should inc metric with eventName as label", () => {
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": false,
+      "metricPrefix": "test"
+    };
+    const message = "Message";
+    const routingKey = "namespace.event-name.some.cool.key";
+
+    before(() => {
+      prometheusClient.register.resetMetrics();
+    });
+
+    When("initializing the logger and doing some string logging", () => {
+      const logger = createLogger(config);
+      logger.error(message, {meta: {routingKey}});
+    });
+
+    Then("the logCounter metric should be incremented", () => {
+      const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
+      const errorMetric = counterMetric.hashMap["eventName:event-name,level:error"];
+      const errorCount = errorMetric.value;
+      const errorLabels = errorMetric.labels;
+      errorCount.should.eql(1);
+      errorLabels.should.eql({level: "error", eventName: "event-name"});
+    });
+  });
 });

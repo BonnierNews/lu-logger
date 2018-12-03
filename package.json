@@ -7,7 +7,7 @@
     "Ivan Malmberg",
     "Markus Ekholm"
   ],
-  "version": "1.8.1",
+  "version": "1.9.0",
   "scripts": {
     "test": "node_modules/.bin/mocha",
     "posttest": "eslint --cache ."

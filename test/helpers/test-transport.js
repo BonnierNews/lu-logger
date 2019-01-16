@@ -12,6 +12,8 @@ class CustomTransport extends Transport {
     let message = info.message;
     if (!message) {
       message = info[Symbol.for("message")];
+      info._message = message;
+      message = JSON.parse(message)["@message"];
     }
     this.logs.push({...info, message});
     callback();

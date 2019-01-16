@@ -13,3 +13,6 @@ chai.config.includeStack = true;
 Object.assign(global, {
   should: chai.should()
 });
+
+const {logger} = require("../../.");
+logger.add(require("../helpers/test-transport"));

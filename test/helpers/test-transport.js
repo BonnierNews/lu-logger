@@ -2,7 +2,6 @@
 
 const Transport = require("winston-transport");
 
-
 class CustomTransport extends Transport {
   constructor(opts) {
     super(opts);
@@ -10,8 +9,11 @@ class CustomTransport extends Transport {
     this.logs = [];
   }
   log(info, callback) {
-    const {level, message, meta} = info;
-    this.logs.push({level, message, meta});
+    let message = info.message;
+    if (!message) {
+      message = info[Symbol.for("message")];
+    }
+    this.logs.push({...info, message});
     callback();
   }
 }

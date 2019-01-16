@@ -5,6 +5,7 @@ const winston = require("winston");
 const path = require("path");
 const callingAppName = require(`${process.cwd()}/package.json`).name;
 const splatEntry = require("./lib/splat-entry");
+const logLevels = require("./config/levels");
 
 require("winston-syslog").Syslog; // eslint-disable-line no-unused-expressions
 
@@ -17,7 +18,7 @@ const formatter = config.logJson ? winston.format.logstash() : defaultFormatter;
 
 if (config.log === "file") {
   const fileName = path.join(process.cwd(), "logs", `${appConfig.envName}.log`);
-  const options = config.truncateLog ? { flags: "w" } : { flags: "a" };
+  const options = config.truncateLog ? {flags: "w"} : {flags: "a"};
   transports.push(new winston.transports.File({
     filename: fileName,
     options: options
@@ -39,6 +40,7 @@ if (config.sysLogOpts) {
 
 const logger = winston.createLogger({
   level: config.logLevel || "info",
+  levels: logLevels,
   transports: transports,
   format: winston.format.combine(
     winston.format.metadata({key: "meta"}),

@@ -1,6 +1,6 @@
 {
   "parserOptions": {
-    "ecmaVersion": 6
+    "ecmaVersion": 2018
   },
   "env": {
     "node": true,
@@ -10,18 +10,18 @@
   "rules": {
     "arrow-parens": 2,
     "arrow-spacing": 2,
-    "brace-style": [2, "1tbs", { "allowSingleLine": false }],
+    "brace-style": [2, "1tbs", {"allowSingleLine": false}],
     "callback-return": 2,
     "camelcase": 1,
     "comma-spacing": 1,
     "curly": [2, "multi-line"],
-    "dot-notation": [2, { "allowKeywords": true }],
+    "dot-notation": [2, {"allowKeywords": true}],
     "eol-last": 2,
     "eqeqeq": 2,
     "handle-callback-err": 2,
-    "key-spacing": [1, { "beforeColon": false, "afterColon": true }],
+    "key-spacing": [1, {"beforeColon": false, "afterColon": true}],
     "keyword-spacing": 1,
-    "indent": [1, 2, { "SwitchCase": 1, "MemberExpression": 1 }],
+    "indent": [1, 2, {"SwitchCase": 1, "MemberExpression": 1}],
     "new-cap": 2,
     "new-parens": 1,
     "no-alert": 2,
@@ -65,17 +65,24 @@
     "no-use-before-define": [2, "nofunc"],
     "no-var": 2,
     "no-with": 2,
+    "object-curly-spacing": ["error", "never"],
     "prefer-arrow-callback": 2,
     "prefer-const": ["error", {"destructuring": "all"}],
     "prefer-template": 1,
-    "quotes": [1, "double"],
+    "quotes": [1, "double", {"avoidEscape": true}],
     "semi": [2, "always"],
     "semi-spacing": [1, {"before": false, "after": true}],
     "space-before-blocks": 1,
     "space-before-function-paren": [1, {"anonymous": "always", "named": "never"}],
     "space-infix-ops": 1,
-    "space-unary-ops": [1, { "words": true, "nonwords": false }],
+    "space-unary-ops": [1, {"words": true, "nonwords": false}],
+    "space-in-parens": ["error", "never"],
     "strict": [2, "global"],
-    "yoda": [1, "never"]
+    "template-curly-spacing": ["error", "never"],
+    "yoda": [1, "never"],
+    "require-await": ["error"],
+    "no-restricted-modules": ["warn", {
+      "patterns": ["test-data/*"]
+    }]
   }
 }

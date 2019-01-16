@@ -1,19 +1,12 @@
 "use strict";
 
-const createLogger = require("../../lib/logger");
+const {logger} = require("../../");
+const transport = require("../helpers/test-transport");
 const intercept = require("intercept-stdout");
 const prometheusClient = require("prom-client");
 
 Feature("Logging", () => {
   Scenario("Logging debug with JSON format", () => {
-    let unhook;
-    let stdoutContents = "";
-
-    const config = {
-      "log": "stdout",
-      "logLevel": "debug",
-      "logJson": true
-    };
     const message = "Message";
     const data = {
       "meta": {
@@ -23,37 +16,21 @@ Feature("Logging", () => {
       }
     };
 
-    When("initializing the logger and doing some JSON logging", () => {
-      const logger = createLogger(config);
-
-      unhook = intercept((txt) => {
-        stdoutContents += txt;
-      });
-
+    When("doing some JSON logging", () => {
       logger.debug(message, data);
-
-      unhook();
     });
 
     Then("log output should be JSON", () => {
-      const logContent = JSON.parse(stdoutContents.trim());
+      const logContent = transport.logs.shift();
       logContent.logLevel.should.equal("debug");
-      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(message);
+      // logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
     });
   });
 
 
   Scenario("Logging a too big message JSON format", () => {
-    let unhook;
-    let stdoutContents = "";
-
-    const config = {
-      "log": "stdout",
-      "logLevel": "debug",
-      "logJson": true
-    };
     const message = "Message".repeat(9000);
     const data = {
       "meta": {
@@ -63,22 +40,12 @@ Feature("Logging", () => {
       }
     };
 
-    When("initializing the logger and doing some JSON logging", () => {
-      const logger = createLogger(config);
-
-      unhook = intercept((txt) => {
-        stdoutContents += txt;
-      });
-
+    When("logging a huge message", () => {
       logger.debug(message, data);
-
-      unhook();
     });
 
-    Then("log output should be JSON", () => {
-      const logContent = JSON.parse(stdoutContents.trim());
-      logContent.logLevel.should.equal("debug");
-      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal("too big to log");
     });

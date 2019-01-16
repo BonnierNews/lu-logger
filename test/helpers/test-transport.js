@@ -1,7 +1,6 @@
 "use strict";
 
 const Transport = require("winston-transport");
-
 class CustomTransport extends Transport {
   constructor(opts) {
     super(opts);

@@ -1,154 +1,263 @@
-// "use strict";
+"use strict";
 
-// const createLogger = require("../../lib/logger");
-// const intercept = require("intercept-stdout");
-// const prometheusClient = require("prom-client");
+const createLogger = require("../../lib/logger");
+const intercept = require("intercept-stdout");
+const prometheusClient = require("prom-client");
 
-// Feature("Logging", () => {
-//   Scenario("Logging with JSON format", () => {
-//     let unhook;
-//     let stdoutContents = "";
+Feature("Logging", () => {
+  Scenario("Logging debug with JSON format", () => {
+    let unhook;
+    let stdoutContents = "";
 
-//     const config = {
-//       log: "stdout",
-//       logLevel: "debug",
-//       logJson: true
-//     };
-//     const message = "Message";
-//     const data = {
-//       "meta": {
-//         "createdAt": "2017-09-24-00:00T00:00:00.000Z",
-//         "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
-//         "correlationId": "sample-correlation-id"
-//       }
-//     };
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": true
+    };
+    const message = "Message";
+    const data = {
+      "meta": {
+        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+        "correlationId": "sample-correlation-id"
+      }
+    };
 
-//     When("initializing the logger and doing some JSON logging", () => {
-//       const logger = createLogger(config);
+    When("initializing the logger and doing some JSON logging", () => {
+      const logger = createLogger(config);
 
-//       unhook = intercept((txt) => {
-//         stdoutContents += txt;
-//       });
+      unhook = intercept((txt) => {
+        stdoutContents += txt;
+      });
 
-//       logger.debug(message, data);
+      logger.debug(message, data);
 
-//       unhook();
-//     });
+      unhook();
+    });
 
-//     Then("log output should be JSON", () => {
-//       const logContent = JSON.parse(stdoutContents.trim());
-//       logContent.logLevel.should.equal("debug");
-//       logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
-//       logContent.metaData.should.deep.equal(data);
-//       logContent.message.should.equal(message);
-//     });
-//   });
+    Then("log output should be JSON", () => {
+      const logContent = JSON.parse(stdoutContents.trim());
+      logContent.logLevel.should.equal("debug");
+      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal(message);
+    });
+  });
 
-//   Scenario("Logging with string format", () => {
-//     let unhook;
-//     let stdoutContents = "";
 
-//     const config = {
-//       "log": "stdout",
-//       "logLevel": "debug",
-//       "logJson": false
-//     };
-//     const message = "Message";
-//     const data = {
-//       "meta": {
-//         "createdAt": "2017-09-24-00:00T00:00:00.000Z",
-//         "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
-//         "correlationId": "sample-correlation-id"
-//       }
-//     };
+  Scenario("Logging a too big message JSON format", () => {
+    let unhook;
+    let stdoutContents = "";
 
-//     When("initializing the logger and doing some string logging", () => {
-//       const logger = createLogger(config);
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": true
+    };
+    const message = "Message".repeat(9000);
+    const data = {
+      "meta": {
+        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+        "correlationId": "sample-correlation-id"
+      }
+    };
 
-//       unhook = intercept((txt) => {
-//         stdoutContents += txt;
-//       });
+    When("initializing the logger and doing some JSON logging", () => {
+      const logger = createLogger(config);
 
-//       logger.debug(message, data);
+      unhook = intercept((txt) => {
+        stdoutContents += txt;
+      });
 
-//       unhook();
-//     });
+      logger.debug(message, data);
 
-//     Then("log output should be string", (done) => {
-//       stdoutContents.should.be.a("string");
+      unhook();
+    });
 
-//       try {
-//         JSON.parse(stdoutContents);
-//         done("No error thrown");
-//       } catch (err) {
-//         done();
-//       }
-//     });
-//   });
+    Then("log output should be JSON", () => {
+      const logContent = JSON.parse(stdoutContents.trim());
+      logContent.logLevel.should.equal("debug");
+      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal("too big to log");
+    });
+  });
 
-//   Scenario("Logging should inc metric", () => {
-//     const config = {
-//       "log": "stdout",
-//       "logLevel": "debug",
-//       "logJson": false,
-//       "metricPrefix": "test"
-//     };
-//     const message = "Message";
 
-//     before(() => {
-//       prometheusClient.register.resetMetrics();
-//     });
+  Scenario("Logging error with JSON format", () => {
+    let unhook;
+    let stdoutContents = "";
 
-//     When("initializing the logger and doing some string logging", () => {
-//       const logger = createLogger(config);
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": true
+    };
+    const message = "Message";
+    const data = {
+      "meta": {
+        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+        "correlationId": "sample-correlation-id"
+      }
+    };
 
-//       logger.emergency(message);
+    When("initializing the logger and doing some JSON logging", () => {
+      const logger = createLogger(config);
 
-//       logger.alert(message);
-//       logger.alert(message);
+      unhook = intercept((txt) => {
+        stdoutContents += txt;
+      });
 
-//       logger.critical(message);
-//       logger.critical(message);
-//       logger.critical(message);
+      logger.error(message, data);
 
-//       logger.error(message);
-//       logger.error(message);
-//       logger.error(message);
-//       logger.error(message);
+      unhook();
+    });
 
-//       logger.warning(message);
-//       logger.warning(message);
-//       logger.warning(message);
-//       logger.warning(message);
-//       logger.warning(message);
+    Then("log output should be JSON", () => {
+      const logContent = JSON.parse(stdoutContents.trim());
+      logContent.logLevel.should.equal("error");
+      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal(message);
+    });
+  });
 
-//       logger.notice(message);
+  Scenario("Logging with string format", () => {
+    let unhook;
+    let stdoutContents = "";
 
-//       logger.info(message);
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": false
+    };
+    const message = "Message";
+    const data = {
+      "meta": {
+        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+        "correlationId": "sample-correlation-id"
+      }
+    };
 
-//       logger.debug(message);
-//     });
+    When("initializing the logger and doing some string logging", () => {
+      const logger = createLogger(config);
 
-//     Then("the logCounter metric should be incremented", () => {
+      unhook = intercept((txt) => {
+        stdoutContents += txt;
+      });
 
-//       const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
-//       const emergencyCount = counterMetric.hashMap["level:emergency"].value;
-//       const alertCount = counterMetric.hashMap["level:alert"].value;
-//       const criticalCount = counterMetric.hashMap["level:crit"].value;
-//       const errorCount = counterMetric.hashMap["level:error"].value;
-//       const warningCount = counterMetric.hashMap["level:warning"].value;
-//       const noticeCount = counterMetric.hashMap["level:notice"].value;
-//       const infoCount = counterMetric.hashMap["level:info"].value;
-//       const debugCount = counterMetric.hashMap["level:debug"].value;
+      logger.debug(message, data);
 
-//       emergencyCount.should.eql(1);
-//       alertCount.should.eql(2);
-//       criticalCount.should.eql(3);
-//       errorCount.should.eql(4);
-//       warningCount.should.eql(5);
-//       noticeCount.should.eql(1);
-//       infoCount.should.eql(1);
-//       debugCount.should.eql(1);
-//     });
-//   });
-// });
+      unhook();
+    });
+
+    Then("log output should be string", (done) => {
+      stdoutContents.should.be.a("string");
+
+      try {
+        JSON.parse(stdoutContents);
+        done("No error thrown");
+      } catch (err) {
+        done();
+      }
+    });
+  });
+
+  Scenario("Logging should inc metric", () => {
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": false,
+      "metricPrefix": "test"
+    };
+    const message = "Message";
+
+    before(() => {
+      prometheusClient.register.resetMetrics();
+    });
+
+    When("initializing the logger and doing some string logging", () => {
+      const logger = createLogger(config);
+
+      logger.emergency(message);
+
+      logger.alert(message);
+      logger.alert(message);
+
+      logger.critical(message);
+      logger.critical(message);
+      logger.critical(message);
+
+      logger.error(message);
+      logger.error(message);
+      logger.error(message);
+      logger.error(message);
+
+      logger.warning(message);
+      logger.warning(message);
+      logger.warning(message);
+      logger.warning(message);
+      logger.warning(message);
+
+      logger.notice(message);
+
+      logger.info(message);
+
+      logger.debug(message);
+    });
+
+    Then("the logCounter metric should be incremented", () => {
+
+      const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
+      const emergencyCount = counterMetric.hashMap["level:emergency"].value;
+      const alertCount = counterMetric.hashMap["level:alert"].value;
+      const criticalCount = counterMetric.hashMap["level:crit"].value;
+      const errorCount = counterMetric.hashMap["level:error"].value;
+      const warningCount = counterMetric.hashMap["level:warning"].value;
+      const noticeCount = counterMetric.hashMap["level:notice"].value;
+      const infoCount = counterMetric.hashMap["level:info"].value;
+      const debugCount = counterMetric.hashMap["level:debug"].value;
+
+      emergencyCount.should.eql(1);
+      alertCount.should.eql(2);
+      criticalCount.should.eql(3);
+      errorCount.should.eql(4);
+      warningCount.should.eql(5);
+      noticeCount.should.eql(1);
+      infoCount.should.eql(1);
+      debugCount.should.eql(1);
+    });
+  });
+
+  Scenario("Logging error with routingKey in logObject should inc metric with eventName as label", () => {
+    const config = {
+      "log": "stdout",
+      "logLevel": "debug",
+      "logJson": false,
+      "metricPrefix": "test"
+    };
+    const message = "Message";
+    const routingKey = "namespace.event-name.some.cool.key";
+
+    before(() => {
+      prometheusClient.register.resetMetrics();
+    });
+
+    When("initializing the logger and doing some string logging", () => {
+      const logger = createLogger(config);
+      logger.error(message, {meta: {routingKey}});
+    });
+
+    Then("the logCounter metric should be incremented", () => {
+      const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
+      const errorMetric = counterMetric.hashMap["eventName:event-name,level:error"];
+      const errorCount = errorMetric.value;
+      const errorLabels = errorMetric.labels;
+      errorCount.should.eql(1);
+      errorLabels.should.eql({level: "error", eventName: "event-name"});
+    });
+  });
+});

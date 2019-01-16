@@ -7,7 +7,7 @@
     "Ivan Malmberg",
     "Markus Ekholm"
   ],
-  "version": "1.5.0",
+  "version": "1.9.1",
   "scripts": {
     "test": "node_modules/.bin/mocha",
     "posttest": "eslint --cache ."
@@ -28,9 +28,9 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^4.18.0",
+    "eslint": "^4.19.1",
     "intercept-stdout": "^0.1.2",
-    "mocha": "^3.1.2",
+    "mocha": "^5.2.0",
     "mocha-cakes-2": "^2.0.1"
   }
 }

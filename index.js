@@ -3,55 +3,52 @@
 const appConfig = require("exp-config");
 const winston = require("winston");
 const path = require("path");
+const callingAppName = require(`${process.cwd()}/package.json`).name;
+const splatEntry = require("./lib/splat-entry");
+
 require("winston-syslog").Syslog; // eslint-disable-line no-unused-expressions
 
-const fooTransport = require("./lib/transports");
 const PromTransport = require("./lib/prom-transport");
-const callingAppName = require(`${process.cwd()}/package.json`).name;
 const config = appConfig.logging;
-
 const transports = [new PromTransport()];
 
-if (appConfig.envName === "test") {
-  transports.push(require("./test/helpers/test-transport"));
-}
+const defaultFormatter = winston.format.printf((info) => `${info.timestamp} - ${info.level}: ${info.message}`);
+const formatter = config.logJson ? winston.format.logstash() : defaultFormatter;
 
 if (config.log === "file") {
   const fileName = path.join(process.cwd(), "logs", `${appConfig.envName}.log`);
   const options = config.truncateLog ? { flags: "w" } : { flags: "a" };
-  transports.push(new fooTransport({
+  transports.push(new winston.transports.File({
     filename: fileName,
-    json: config.logJson,
-    options: options,
-    stringify,
-    prettyPrint: true
+    options: options
   }));
 }
 
 if (config.log === "stdout") {
-  transports.push(new winston.transports.Console({
-    colorize: false,
-    timestamp: true,
-    json: config.logJson,
-    stringify
-  }));
+  transports.push(new winston.transports.Console());
 }
 
 if (config.sysLogOpts) {
   transports.push(new winston.transports.Syslog(Object.assign({
     localhost: process.env.HOSTNAME,
     app_name: callingAppName, // eslint-disable-line camelcase
-    eol: "\n",
-    json: config.logJson,
-    stringify
+    eol: "\n"
   }, config.sysLogOpts)));
 }
 
-function stringify(obj) {
-  return config.logJson ? JSON.stringify(obj) : obj.replace(/\n/g, " ");
-}
 
-module.exports = winston.createLogger({
+const logger = winston.createLogger({
   level: config.logLevel || "info",
-  transports: transports
+  transports: transports,
+  format: winston.format.combine(
+    winston.format.metadata({key: "meta"}),
+    winston.format.timestamp(),
+    winston.format(splatEntry)(),
+    formatter
+  ),
+  defaultMeta: {appName: callingAppName},
 });
+
+module.exports = {
+  logger
+};

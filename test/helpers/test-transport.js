@@ -9,8 +9,10 @@ class CustomTransport extends Transport {
     this.name = "test-transport";
     this.logs = [];
   }
-  log(level, message, meta) {
+  log(info, callback) {
+    const {level, message, meta} = info;
     this.logs.push({level, message, meta});
+    callback();
   }
 }
 

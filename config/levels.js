@@ -12,7 +12,7 @@ const levels = {
 };
 const aliases = {
   emergency: "emerg",
-  critical: "crit",
+  critical: "crit"
 };
 
 const colors = {
@@ -31,4 +31,3 @@ module.exports = {
   aliases,
   colors
 };
-

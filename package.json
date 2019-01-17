@@ -7,7 +7,7 @@
     "Ivan Malmberg",
     "Markus Ekholm"
   ],
-  "version": "1.9.1",
+  "version": "2.0.0",
   "scripts": {
     "test": "mocha --exit && eslint . --cache && depcheck --ignores=\"prettier\"",
     "posttest": "eslint --cache .",
@@ -34,6 +34,7 @@
     "eslint": "^4.19.1",
     "intercept-stdout": "^0.1.2",
     "mocha": "^5.2.0",
-    "mocha-cakes-2": "^2.0.1"
+    "mocha-cakes-2": "^2.0.1",
+    "prettier": "^1.15.3"
   }
 }

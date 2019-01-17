@@ -39,7 +39,6 @@
 //     log[log.length - 4].metaData.shoud.eql(data);
 //   });
 
-
 //   it("should log a message", () => {
 //     log[log.length - 3].message.should.eql("some message");
 //     log[log.length - 3].metaData.shoud.eql(data);

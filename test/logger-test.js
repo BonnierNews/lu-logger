@@ -6,6 +6,10 @@ const transport = require("./helpers/test-transport");
 const should = require("chai").should();
 
 describe("logger", () => {
+  before(() => {
+    transport.logs = [];
+  });
+
   it("should log", () => {
     logger.info("foobar");
     const log = transport.logs.shift();

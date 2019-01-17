@@ -9,8 +9,10 @@
   ],
   "version": "1.9.1",
   "scripts": {
-    "test": "node_modules/.bin/mocha",
-    "posttest": "eslint --cache ."
+    "test": "mocha --exit && eslint . --cache && depcheck --ignores=\"prettier\"",
+    "posttest": "eslint --cache .",
+    "lint": "eslint --cache .",
+    "format": "prettier **/*.js --write && eslint . --fix"
   },
   "repository": "https://github.com/BonnierNews/lu-logger.git",
   "keywords": [
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "depcheck": "^0.6.11",
     "eslint": "^4.19.1",
     "intercept-stdout": "^0.1.2",
     "mocha": "^5.2.0",

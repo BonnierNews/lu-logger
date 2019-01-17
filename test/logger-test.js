@@ -21,14 +21,14 @@ describe("logger", () => {
     logger.info("some message", {some: "info"});
     const log = transport.logs.shift();
     log.should.include({level: "info", message: "some message"});
-    log.metaData.should.eql({some: "info"});
+    log.metaData.should.eql({meta: {some: "info"}});
   });
 
   it("should log splat multiple arguments with meta", () => {
     logger.info("one", "two", "three", "four", {some: "info"});
     const log = transport.logs.shift();
     log.should.include({level: "info", message: "one two three four"});
-    log.metaData.should.eql({some: "info"});
+    log.metaData.should.eql({meta: {some: "info"}});
   });
 
   it("should log splat multiple arguments without meta", () => {
@@ -50,7 +50,7 @@ describe("logger", () => {
       level: "info",
       message: "one two { three: 3, four: 4 }"
     });
-    log.metaData.should.eql({correlationId: "coobar"});
+    log.metaData.should.eql({meta: {correlationId: "coobar"}});
   });
 
   describe("levels", () => {
@@ -81,5 +81,32 @@ describe("logger", () => {
         log.logLevel.should.eql("warning");
       });
     });
+  });
+
+  describe("metaData", () => {
+    it("should let metaDatas key be meta", () => {
+      const data = {
+        "meta": {
+          "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+          "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+          "correlationId": "sample-correlation-id"
+        }
+      };
+      logger.info("message", data);
+      const log = transport.logs.shift();
+      log.metaData.should.eql(data);
+    });
+
+    it("should wrap metaData in meta in not the case", () => {
+      const data = {
+        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
+        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
+        "correlationId": "sample-correlation-id"
+      };
+      logger.info("message", data);
+      const log = transport.logs.shift();
+      log.metaData.should.eql({meta: data});
+    });
+
   });
 });

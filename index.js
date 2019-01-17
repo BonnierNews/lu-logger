@@ -32,6 +32,14 @@ function truncateTooLong(info) {
   return info;
 }
 
+function metaDataFormat(info) {
+  const meta = info.metaData && info.metaData.meta;
+  if (!meta && Object.keys(info.metaData).length > 0) {
+    info.metaData = {meta: info.metaData};
+  }
+  return info;
+}
+
 function createLogger() {
   const transports = [new PromTransport()];
 
@@ -72,6 +80,7 @@ function createLogger() {
       format(splatEntry)(),
       format(location)(),
       format(truncateTooLong)(),
+      format(metaDataFormat)(),
       formatter
     )
   });

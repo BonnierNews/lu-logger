@@ -50,50 +50,6 @@ Feature("Logging", () => {
     });
   });
 
-
-  Scenario("Logging error with JSON format", () => {
-    const message = "Message";
-    const data = {
-      "meta": {
-        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
-        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
-        "correlationId": "sample-correlation-id"
-      }
-    };
-
-    When("doing some JSON logging", () => {
-      logger.error(message, data);
-    });
-
-    Then("log output should be JSON", () => {
-      const logContent = transport.logs.shift();
-      logContent.logLevel.should.equal("error");
-      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
-      logContent.metaData.should.deep.equal(data);
-      logContent.message.should.equal(message);
-    });
-  });
-
-  Scenario("Logging with string format", () => {
-    const stdoutContents = "";
-    const message = "Message";
-    const data = {
-      "meta": {
-        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
-        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
-        "correlationId": "sample-correlation-id"
-      }
-    };
-
-    When("initializing the logger and doing some string logging", () => {
-      logger.debug(message, data);
-    });
-
-    Then("log output should be string", () => {
-      stdoutContents.should.be.a("string");
-    });
-  });
-
   Scenario("Logging should inc metric", () => {
     const message = "Message";
 

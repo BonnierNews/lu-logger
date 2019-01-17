@@ -25,7 +25,7 @@ Feature("Logging", () => {
       logContent.logLevel.should.equal("debug");
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(message);
-      // logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
+      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
     });
   });
 

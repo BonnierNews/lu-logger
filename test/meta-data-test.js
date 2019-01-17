@@ -5,9 +5,9 @@ const transport = require("./helpers/test-transport");
 
 describe("logging messages with default metaData", () => {
   const data = {
-    "meta": {
-      "correlationId": "sample-correlation-id",
-      "eventName": "someEvent"
+    meta: {
+      correlationId: "sample-correlation-id",
+      eventName: "someEvent"
     }
   };
   before(() => {
@@ -26,7 +26,7 @@ describe("logging messages with default metaData", () => {
   it("should log a message with metaData and splat", () => {
     const logger = buildLogger(data);
     logger.add(transport);
-    logger.info("some message", "one", {"true": false});
+    logger.info("some message", "one", {true: false});
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");
     log.metaData.should.eql(data);
@@ -44,10 +44,9 @@ describe("logging messages with default metaData", () => {
   it("should get correct location", () => {
     const logger = buildLogger(data);
     logger.add(transport);
-    logger.info("some message", "one", {"true": false});
+    logger.info("some message", "one", {true: false});
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");
     log.location.should.eql("test/meta-data-test.js:47");
   });
-
 });

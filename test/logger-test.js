@@ -86,10 +86,10 @@ describe("logger", () => {
   describe("metaData", () => {
     it("should let metaDatas key be meta", () => {
       const data = {
-        "meta": {
-          "createdAt": "2017-09-24-00:00T00:00:00.000Z",
-          "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
-          "correlationId": "sample-correlation-id"
+        meta: {
+          createdAt: "2017-09-24-00:00T00:00:00.000Z",
+          updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+          correlationId: "sample-correlation-id"
         }
       };
       logger.info("message", data);
@@ -99,9 +99,9 @@ describe("logger", () => {
 
     it("should wrap metaData in meta in not the case", () => {
       const data = {
-        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
-        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
-        "correlationId": "sample-correlation-id"
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
       };
       logger.info("message", data);
       const log = transport.logs.shift();

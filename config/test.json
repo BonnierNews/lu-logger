@@ -3,6 +3,7 @@
     "log": "file",
     "logLevel": "debug",
     "logJson": true,
-    "truncateLog": true
+    "truncateLog": true,
+    "metricPrefix": "test"
   }
 }

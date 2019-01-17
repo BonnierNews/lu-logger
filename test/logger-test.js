@@ -107,6 +107,11 @@ describe("logger", () => {
       const log = transport.logs.shift();
       log.metaData.should.eql({meta: data});
     });
+  });
 
+  describe("location", () => {
+    logger.info("message");
+    const log = transport.logs.shift();
+    log.location.should.eql("test/logger-test.js:113");
   });
 });

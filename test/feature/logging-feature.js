@@ -5,6 +5,10 @@ const transport = require("../helpers/test-transport");
 const prometheusClient = require("prom-client");
 
 Feature("Logging", () => {
+  before(() => {
+    transport.logs = [];
+  });
+
   Scenario("Logging debug with JSON format", () => {
     const message = "Message";
     const data = {

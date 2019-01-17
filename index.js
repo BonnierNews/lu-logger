@@ -40,7 +40,14 @@ function metaDataFormat(info) {
   return info;
 }
 
-function createLogger() {
+function metaDataFn(info, opts) {
+  if (opts.metaData) {
+    info.metaData = opts.metaData;
+  }
+  return info;
+}
+
+function buildLogger(metaData) {
   const transports = [new PromTransport()];
 
   const defaultFormatter = format.printf((info) => `${info.timestamp} - ${info.level}: ${info.message}`);
@@ -75,9 +82,10 @@ function createLogger() {
     transports: transports,
     format: format.combine(
       format.metadata({key: "metaData"}),
+      format(metaDataFn)({metaData}),
       format.timestamp(),
       format(logLevel)(),
-      format(splatEntry)(),
+      format(splatEntry)({metaData}),
       format(location)(),
       format(truncateTooLong)(),
       format(metaDataFormat)(),
@@ -89,6 +97,6 @@ function createLogger() {
 }
 
 module.exports = {
-  logger: createLogger(),
-  createLogger
+  logger: buildLogger(),
+  buildLogger
 };

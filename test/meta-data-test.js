@@ -40,4 +40,14 @@ describe("logging messages with default metaData", () => {
     log.message.should.eql("some message");
     log.metaData.should.eql({});
   });
+
+  it("should get correct location", () => {
+    const logger = buildLogger(data);
+    logger.add(transport);
+    logger.info("some message", "one", {"true": false});
+    const log = transport.logs.shift();
+    log.message.should.eql("some message one { true: false }");
+    log.location.should.eql("test/meta-data-test.js:47");
+  });
+
 });

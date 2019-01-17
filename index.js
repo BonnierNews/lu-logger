@@ -7,8 +7,7 @@ const path = require("path");
 const callingAppName = require(`${process.cwd()}/package.json`).name;
 const splatEntry = require("./lib/splat-entry");
 const logLevels = require("./config/levels");
-const getLoc = require("./lib/get-loc");
-// const truncate = require("./lib/truncate-utf8-bytes");
+const {getLoc, caller} = require("./lib/get-loc");
 
 require("winston-syslog").Syslog; // eslint-disable-line no-unused-expressions
 
@@ -20,8 +19,12 @@ function logLevel(info) {
   return info;
 }
 
-function location(info) {
-  info.location = getLoc();
+function location(info, opts) {
+  if (opts.caller !== __filename) {
+    info.location = getLoc(11);
+  } else {
+    info.location = getLoc();
+  }
   return info;
 }
 
@@ -86,7 +89,7 @@ function buildLogger(metaData) {
       format.timestamp(),
       format(logLevel)(),
       format(splatEntry)({metaData}),
-      format(location)(),
+      format(location)({caller: caller()}),
       format(truncateTooLong)(),
       format(metaDataFormat)(),
       formatter

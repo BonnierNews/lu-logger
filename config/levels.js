@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = {
+const levels = {
   emergency: 0,
   alert: 1,
   critical: 2,
@@ -10,3 +10,25 @@ module.exports = {
   info: 6,
   debug: 7
 };
+const aliases = {
+  emergency: "emerg",
+  critical: "crit",
+};
+
+const colors = {
+  emergency: "blue",
+  alert: "darkred",
+  critical: "cyan",
+  error: "red",
+  warning: "yellow",
+  notice: "magenta",
+  info: "green",
+  debug: "gray"
+};
+
+module.exports = {
+  levels,
+  aliases,
+  colors
+};
+

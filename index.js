@@ -14,7 +14,7 @@ const PromTransport = require("./lib/prom-transport");
 const config = appConfig.logging;
 
 function logLevel(info) {
-  info.logLevel = info.level;
+  info.logLevel = logLevels.aliases[info.level] || info.level;
   return info;
 }
 
@@ -22,7 +22,7 @@ function createLogger() {
   const transports = [new PromTransport()];
 
   const defaultFormatter = format.printf((info) => `${info.timestamp} - ${info.level}: ${info.message}`);
-  const formatter = config.logJson ? format.logstash() : defaultFormatter;
+  const formatter = config.logJson ? format.json() : defaultFormatter;
 
   if (config.log === "file") {
     const fileName = path.join(process.cwd(), "logs", `${appConfig.envName}.log`);
@@ -48,7 +48,8 @@ function createLogger() {
 
   const logger = winston.createLogger({
     level: config.logLevel || "info",
-    levels: logLevels,
+    levels: logLevels.levels,
+    colors: logLevel.colors,
     transports: transports,
     format: format.combine(
       format.metadata({key: "metaData"}),

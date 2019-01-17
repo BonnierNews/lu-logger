@@ -50,5 +50,24 @@ describe("logger", () => {
         log.level.should.eql(level);
       });
     });
+    describe("logLevel aliases", () => {
+      it("should mark emergency with emerg", () => {
+        logger.emergency("foobar");
+        const log = transport.logs.shift();
+        log.logLevel.should.eql("emerg");
+      });
+
+      it("should mark critical with crit", () => {
+        logger.critical("foobar");
+        const log = transport.logs.shift();
+        log.logLevel.should.eql("crit");
+      });
+
+      it("should keep levels when no alias", () => {
+        logger.warning("foobar");
+        const log = transport.logs.shift();
+        log.logLevel.should.eql("warning");
+      });
+    });
   });
 });

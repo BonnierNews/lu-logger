@@ -1500,9 +1500,9 @@ which@^1.2.9:
   dependencies:
     isexe "^2.0.0"
 
-"winston-syslog@github:winstonjs/winston-syslog#d195dbb0b615780":
+"winston-syslog@github:BonnierNews/winston-syslog#dda9dcd":
   version "2.0.0"
-  resolved "https://codeload.github.com/winstonjs/winston-syslog/tar.gz/d195dbb0b61578014775d6bb6bb5c1318857b9c3"
+  resolved "https://codeload.github.com/BonnierNews/winston-syslog/tar.gz/dda9dcda34574c8ea07c7d3ffdf0fdefbe2390b7"
   dependencies:
     cycle "^1.0.3"
     glossy "^0.1.7"

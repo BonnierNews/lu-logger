@@ -28,3 +28,4 @@ config/_revision
 
 # Atom CTAGS
 .tags
+logs

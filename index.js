@@ -4,29 +4,36 @@ const appConfig = require("exp-config");
 const winston = require("winston");
 const {format} = winston;
 const path = require("path");
+const fs = require("fs");
 const callingAppName = require(`${process.cwd()}/package.json`).name;
 const splatEntry = require("./lib/splat-entry");
 const logLevels = require("./config/levels");
-const {getLoc, caller} = require("./lib/get-loc");
+const {getLoc} = require("./lib/get-loc");
+const stringify = require("./lib/stringify");
 
 require("winston-syslog").Syslog; // eslint-disable-line no-unused-expressions
 
 const PromTransport = require("./lib/prom-transport");
 const config = appConfig.logging;
 
+if (config.truncateLog) {
+  fs.truncateSync(logFilename());
+}
+
 function logLevel(info) {
   info.logLevel = logLevels.aliases[info.level] || info.level;
   return info;
 }
 
-function location(info, opts) {
-  if (opts.caller !== __filename) {
-    info.location = getLoc(11);
-  } else {
-    info.location = getLoc();
-  }
+function location(info) {
+  info.location = getLoc();
   return info;
 }
+
+function logFilename() {
+  return path.join(process.cwd(), "logs", `${appConfig.envName}.log`);
+}
+
 
 function truncateTooLong(info) {
   if (Buffer.byteLength(info.message, "utf8") > 60 * 1024) {
@@ -50,18 +57,27 @@ function metaDataFn(info, opts) {
   return info;
 }
 
+function defaultFormatter() {
+  return format.printf((info) => {
+    const meta = Object.keys(info).reduce((acc, key) => {
+      if (!["message", "metaData", "level"].includes(key)) {
+        acc[key] = info[key];
+      }
+      return acc;
+    }, {...info.metaData});
+
+    return `${info.timestamp} - ${info.level}: ${info.message}\t${stringify(meta)}`;
+  });
+}
+
 function buildLogger(metaData) {
   const transports = [new PromTransport()];
 
-  const defaultFormatter = format.printf((info) => `${info.timestamp} - ${info.level}: ${info.message}`);
-  const formatter = config.logJson ? format.json() : defaultFormatter;
+  const formatter = config.logJson ? format.json() : defaultFormatter();
 
   if (config.log === "file") {
-    const fileName = path.join(process.cwd(), "logs", `${appConfig.envName}.log`);
-    const options = config.truncateLog ? {flags: "w"} : {flags: "a"};
     transports.push(new winston.transports.File({
-      filename: fileName,
-      options: options
+      filename: logFilename()
     }));
   }
 
@@ -89,7 +105,7 @@ function buildLogger(metaData) {
       format.timestamp(),
       format(logLevel)(),
       format(splatEntry)({metaData}),
-      format(location)({caller: caller()}),
+      format(location)(),
       format(truncateTooLong)(),
       format(metaDataFormat)(),
       formatter

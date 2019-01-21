@@ -39,12 +39,7 @@ describe("logger", () => {
   });
 
   it("should log splat multiple objects with meta", () => {
-    logger.info(
-      "one",
-      "two",
-      {three: 3, four: 4},
-      {correlationId: "coobar"}
-    );
+    logger.info("one", "two", {three: 3, four: 4}, {correlationId: "coobar"});
     const log = transport.logs.shift();
     log.should.include({
       level: "info",

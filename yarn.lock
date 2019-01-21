@@ -1498,9 +1498,10 @@ which@^1.2.9:
   dependencies:
     isexe "^2.0.0"
 
-winston-syslog@^1.0.0:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/winston-syslog/-/winston-syslog-1.2.6.tgz#4e7990ed0a9f1932187ddd6ec9e038357980961f"
+winston-syslog@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/winston-syslog/-/winston-syslog-2.0.0.tgz#e41330ecffe37c1971e5d1144eff9ace32d5ba2c"
+  integrity sha512-20915SaP9DzXoY9gcb9Efyj+mKz4marNKadryDfgF3BwV2eqloN9drFa71P/+28hW61foUiLfRPeeVauwuimzQ==
   dependencies:
     cycle "~1.0.3"
     glossy "0.x.x"

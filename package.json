@@ -25,7 +25,7 @@
     "exp-config": "^2.0.1",
     "prom-client": "^10.2.2",
     "winston": "^3.1.0",
-    "winston-syslog": "^1.0.0",
+    "winston-syslog": "^2.0.0",
     "winston-transport": "^3.2.1"
   },
   "devDependencies": {

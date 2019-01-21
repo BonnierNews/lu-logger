@@ -48,6 +48,24 @@ describe("logger", () => {
     log.metaData.should.eql({meta: {correlationId: "coobar"}});
   });
 
+  it("should splat stringformatted messages when metadata", () => {
+    const data = {
+      meta: {
+        correlationId: "someCorrelationId"
+      }
+    };
+    const routingKey = "key";
+    const listener = "listenerFn";
+    const message = {
+      id: "someid",
+      type: "message-type"
+    };
+    logger.info(`routingKey: ${routingKey}, listener ${listener}, message %j`, message, data);
+    const log = transport.logs.shift();
+    log.message.should.eql('routingKey: key, listener listenerFn, message {"id":"someid","type":"message-type"}');
+    log.metaData.should.eql(data);
+  });
+
   describe("levels", () => {
     Object.keys(logLevels).forEach((level) => {
       it(`should log ${level}`, () => {
@@ -107,6 +125,6 @@ describe("logger", () => {
   describe("location", () => {
     logger.info("message");
     const log = transport.logs.shift();
-    log.location.should.eql("test/logger-test.js:108");
+    log.location.should.include("test/logger-test.js");
   });
 });

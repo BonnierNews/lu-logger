@@ -1,6 +1,7 @@
 # Dependency directory and npm log
 node_modules
 npm-debug.log
+yarn-error.log
 
 # Code coverage results
 /coverage

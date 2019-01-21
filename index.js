@@ -17,7 +17,8 @@ const PromTransport = require("./lib/prom-transport");
 const config = appConfig.logging;
 
 if (config.truncateLog) {
-  fs.truncateSync(logFilename());
+  const fname = logFilename();
+  if (fs.existsSync(fname)) fs.truncateSync(fname);
 }
 
 function logLevel(info) {

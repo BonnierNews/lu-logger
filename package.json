@@ -36,5 +36,8 @@
     "mocha": "^5.2.0",
     "mocha-cakes-2": "^2.0.1",
     "prettier": "^1.15.3"
+  },
+  "resolutions": {
+    "winston-syslog/glossy": "pavkriz/glossy#efb47740b14defcaae289f98f43ae276cccd1a2f"
   }
 }

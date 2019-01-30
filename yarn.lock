@@ -666,10 +666,9 @@ globby@^5.0.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-glossy@^0.1.7:
+"glossy@github:pavkriz/glossy#efb47740b14defcaae289f98f43ae276cccd1a2f":
   version "0.1.7"
-  resolved "https://registry.yarnpkg.com/glossy/-/glossy-0.1.7.tgz#769b5984a96f6066ab9ea758224825ee6c210f0b"
-  integrity sha1-dptZhKlvYGarnqdYIkgl7mwhDws=
+  resolved "https://codeload.github.com/pavkriz/glossy/tar.gz/efb47740b14defcaae289f98f43ae276cccd1a2f"
 
 graceful-fs@^4.1.2:
   version "4.1.11"
@@ -1500,12 +1499,12 @@ which@^1.2.9:
   dependencies:
     isexe "^2.0.0"
 
-"winston-syslog@github:BonnierNews/winston-syslog#dda9dcd":
+"winston-syslog@github:BonnierNews/winston-syslog#fb1392d":
   version "2.0.0"
-  resolved "https://codeload.github.com/BonnierNews/winston-syslog/tar.gz/dda9dcda34574c8ea07c7d3ffdf0fdefbe2390b7"
+  resolved "https://codeload.github.com/BonnierNews/winston-syslog/tar.gz/fb1392d7107a43cae1276ed9ba4eaa975fab92db"
   dependencies:
     cycle "^1.0.3"
-    glossy "^0.1.7"
+    glossy "github:pavkriz/glossy#efb47740b14defcaae289f98f43ae276cccd1a2f"
   optionalDependencies:
     unix-dgram "^2.0.2"
 

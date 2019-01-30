@@ -88,6 +88,7 @@ function buildLogger(metaData) {
 
   if (config.sysLogOpts) {
     transports.push(new winston.transports.Syslog(Object.assign({
+      type: "RFC5424",
       localhost: process.env.HOSTNAME,
       app_name: callingAppName, // eslint-disable-line camelcase
       eol: "\n"

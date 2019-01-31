@@ -8,7 +8,7 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "2.1.0",
+  "version": "2.1.1",
   "scripts": {
     "test": "mocha --exit && eslint . --cache && depcheck --ignores=\"prettier\"",
     "posttest": "eslint --cache .",

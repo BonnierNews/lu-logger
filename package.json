@@ -8,7 +8,7 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "2.1.0",
+  "version": "2.1.1",
   "scripts": {
     "test": "mocha --exit && eslint . --cache && depcheck --ignores=\"prettier\"",
     "posttest": "eslint --cache .",
@@ -26,7 +26,7 @@
     "exp-config": "^2.0.1",
     "prom-client": "^10.2.2",
     "winston": "^3.1.0",
-    "winston-syslog": "github:BonnierNews/winston-syslog#fb1392d",
+    "winston-syslog": "github:BonnierNews/winston-syslog#7eff1ad",
     "winston-transport": "^3.2.1"
   },
   "devDependencies": {

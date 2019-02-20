@@ -16,7 +16,6 @@ describe("logging messages with default metaData", () => {
 
   it("should log a message with metaData", () => {
     const logger = buildLogger(data);
-    logger.add(transport);
     logger.info("some message");
     const log = transport.logs.shift();
     log.message.should.eql("some message");
@@ -25,7 +24,6 @@ describe("logging messages with default metaData", () => {
 
   it("should log a message with metaData and splat", () => {
     const logger = buildLogger(data);
-    logger.add(transport);
     logger.info("some message", "one", {true: false});
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");
@@ -34,7 +32,6 @@ describe("logging messages with default metaData", () => {
 
   it("should log a stringformatted with metaData and splat", () => {
     const logger = buildLogger(data);
-    logger.add(transport);
     const routingKey = "key";
     const listener = "listenerFn";
     const message = {
@@ -49,7 +46,6 @@ describe("logging messages with default metaData", () => {
 
   it("should not log metaData if not given", () => {
     const logger = buildLogger();
-    logger.add(transport);
     logger.info("some message");
     const log = transport.logs.shift();
     log.message.should.eql("some message");
@@ -58,7 +54,6 @@ describe("logging messages with default metaData", () => {
 
   it("should get correct location", () => {
     const logger = buildLogger(data);
-    logger.add(transport);
     logger.info("some message", "one", {true: false});
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");

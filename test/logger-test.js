@@ -123,8 +123,10 @@ describe("logger", () => {
   });
 
   describe("location", () => {
-    logger.info("message");
-    const log = transport.logs.shift();
-    log.location.should.include("test/logger-test.js");
+    it("should log location", () => {
+      logger.info("message");
+      const log = transport.logs.shift();
+      log.location.should.include("test/logger-test.js");
+    });
   });
 });

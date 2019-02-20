@@ -51,13 +51,6 @@ function metaDataFormat(info) {
   return info;
 }
 
-function metaDataFn(info, opts) {
-  if (opts.metaData) {
-    info.metaData = opts.metaData;
-  }
-  return info;
-}
-
 function defaultFormatter() {
   return format.printf((info) => {
     const meta = Object.keys(info).reduce((acc, key) => {
@@ -71,53 +64,72 @@ function defaultFormatter() {
   });
 }
 
+const transports = [new PromTransport()];
+
+const formatter = config.logJson ? format.json() : defaultFormatter();
+
+if (config.log === "file") {
+  transports.push(new winston.transports.File({
+    filename: logFilename()
+  }));
+}
+
+if (config.log === "stdout") {
+  transports.push(new winston.transports.Console());
+}
+
+if (config.sysLogOpts) {
+  transports.push(new winston.transports.Syslog(Object.assign({
+    type: "RFC5424",
+    localhost: process.env.HOSTNAME,
+    app_name: callingAppName, // eslint-disable-line camelcase
+    eol: "\n"
+  }, config.sysLogOpts)));
+}
+
+
+const logger = winston.createLogger({
+  level: config.logLevel || "info",
+  levels: logLevels.levels,
+  colors: logLevel.colors,
+  transports: transports,
+  format: format.combine(
+    format.metadata({key: "metaData"}),
+    format(splatEntry)(),
+    format.timestamp(),
+    format(logLevel)(),
+    format(location)(),
+    format(truncateTooLong)(),
+    format(metaDataFormat)(),
+    formatter
+  )
+});
+
 function buildLogger(metaData) {
-  const transports = [new PromTransport()];
+  // const local = {
+  //   ...logger,
+  //   add: (...args) => {
+  //     return logger.add(...args);
+  //   },
+  //   log(...args) {
+  //     if (metaData) {
+  //       return logger.log(...args, metaData);
+  //     }
+  //     return logger.log(...args);
+  //   }
+  // };
 
-  const formatter = config.logJson ? format.json() : defaultFormatter();
+  // for (const level of Object.keys(logLevels.levels)) {
+  //   local[level] = (...args) => {
+  //     return local.log(level, ...args);
+  //   };
+  // }
 
-  if (config.log === "file") {
-    transports.push(new winston.transports.File({
-      filename: logFilename()
-    }));
-  }
-
-  if (config.log === "stdout") {
-    transports.push(new winston.transports.Console());
-  }
-
-  if (config.sysLogOpts) {
-    transports.push(new winston.transports.Syslog(Object.assign({
-      type: "RFC5424",
-      localhost: process.env.HOSTNAME,
-      app_name: callingAppName, // eslint-disable-line camelcase
-      eol: "\n"
-    }, config.sysLogOpts)));
-  }
-
-
-  const logger = winston.createLogger({
-    level: config.logLevel || "info",
-    levels: logLevels.levels,
-    colors: logLevel.colors,
-    transports: transports,
-    format: format.combine(
-      format.metadata({key: "metaData"}),
-      format(metaDataFn)({metaData}),
-      format.timestamp(),
-      format(logLevel)(),
-      format(splatEntry)({metaData}),
-      format(location)(),
-      format(truncateTooLong)(),
-      format(metaDataFormat)(),
-      formatter
-    )
-  });
-
-  return logger;
+  // return local;
+  return logger.child(metaData);
 }
 
 module.exports = {
-  logger: buildLogger(),
+  logger,
   buildLogger
 };

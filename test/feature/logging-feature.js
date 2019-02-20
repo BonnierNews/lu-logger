@@ -12,10 +12,10 @@ Feature("Logging", () => {
   Scenario("Logging debug with JSON format", () => {
     const message = "Message";
     const data = {
-      "meta": {
-        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
-        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
-        "correlationId": "sample-correlation-id"
+      meta: {
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
       }
     };
 
@@ -32,14 +32,13 @@ Feature("Logging", () => {
     });
   });
 
-
   Scenario("Logging a too big message JSON format", () => {
     const message = "Message".repeat(9000);
     const data = {
-      "meta": {
-        "createdAt": "2017-09-24-00:00T00:00:00.000Z",
-        "updatedAt": "2017-09-24-00:00T00:00:00.000Z",
-        "correlationId": "sample-correlation-id"
+      meta: {
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
       }
     };
 

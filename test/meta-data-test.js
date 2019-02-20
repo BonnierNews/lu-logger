@@ -3,7 +3,6 @@
 const {logger: winston} = require("../");
 const transport = require("./helpers/test-transport");
 
-
 describe("logging messages with default metaData", () => {
   const data = {
     meta: {

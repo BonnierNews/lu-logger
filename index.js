@@ -35,7 +35,6 @@ function logFilename() {
   return path.join(process.cwd(), "logs", `${appConfig.envName}.log`);
 }
 
-
 function truncateTooLong(info) {
   if (Buffer.byteLength(info.message, "utf8") > 60 * 1024) {
     info.message = "too big to log";
@@ -53,12 +52,15 @@ function metaDataFormat(info) {
 
 function defaultFormatter() {
   return format.printf((info) => {
-    const meta = Object.keys(info).reduce((acc, key) => {
-      if (!["message", "metaData", "level"].includes(key)) {
-        acc[key] = info[key];
-      }
-      return acc;
-    }, {...info.metaData});
+    const meta = Object.keys(info).reduce(
+      (acc, key) => {
+        if (!["message", "metaData", "level"].includes(key)) {
+          acc[key] = info[key];
+        }
+        return acc;
+      },
+      {...info.metaData}
+    );
 
     return `${info.timestamp} - ${info.level}: ${info.message}\t${stringify(meta)}`;
   });
@@ -69,9 +71,11 @@ const transports = [new PromTransport()];
 const formatter = config.logJson ? format.json() : defaultFormatter();
 
 if (config.log === "file") {
-  transports.push(new winston.transports.File({
-    filename: logFilename()
-  }));
+  transports.push(
+    new winston.transports.File({
+      filename: logFilename()
+    })
+  );
 }
 
 if (config.log === "stdout") {
@@ -79,14 +83,20 @@ if (config.log === "stdout") {
 }
 
 if (config.sysLogOpts) {
-  transports.push(new winston.transports.Syslog(Object.assign({
-    type: "RFC5424",
-    localhost: process.env.HOSTNAME,
-    app_name: callingAppName, // eslint-disable-line camelcase
-    eol: "\n"
-  }, config.sysLogOpts)));
+  transports.push(
+    new winston.transports.Syslog(
+      Object.assign(
+        {
+          type: "RFC5424",
+          localhost: process.env.HOSTNAME,
+          app_name: callingAppName, // eslint-disable-line camelcase
+          eol: "\n"
+        },
+        config.sysLogOpts
+      )
+    )
+  );
 }
-
 
 const logger = winston.createLogger({
   level: config.logLevel || "info",

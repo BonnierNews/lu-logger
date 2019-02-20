@@ -1,7 +1,8 @@
 "use strict";
 
-const {buildLogger} = require("../");
+const {logger: winston} = require("../");
 const transport = require("./helpers/test-transport");
+
 
 describe("logging messages with default metaData", () => {
   const data = {
@@ -15,7 +16,7 @@ describe("logging messages with default metaData", () => {
   });
 
   it("should log a message with metaData", () => {
-    const logger = buildLogger(data);
+    const logger = winston.child(data);
     logger.info("some message");
     const log = transport.logs.shift();
     log.message.should.eql("some message");
@@ -23,7 +24,7 @@ describe("logging messages with default metaData", () => {
   });
 
   it("should log a message with metaData and splat", () => {
-    const logger = buildLogger(data);
+    const logger = winston.child(data);
     logger.info("some message", "one", {true: false});
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");
@@ -31,7 +32,7 @@ describe("logging messages with default metaData", () => {
   });
 
   it("should log a stringformatted with metaData and splat", () => {
-    const logger = buildLogger(data);
+    const logger = winston.child(data);
     const routingKey = "key";
     const listener = "listenerFn";
     const message = {
@@ -45,7 +46,7 @@ describe("logging messages with default metaData", () => {
   });
 
   it("should not log metaData if not given", () => {
-    const logger = buildLogger();
+    const logger = winston.child();
     logger.info("some message");
     const log = transport.logs.shift();
     log.message.should.eql("some message");
@@ -53,7 +54,7 @@ describe("logging messages with default metaData", () => {
   });
 
   it("should get correct location", () => {
-    const logger = buildLogger(data);
+    const logger = winston.child(data);
     logger.info("some message", "one", {true: false});
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");

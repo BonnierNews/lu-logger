@@ -105,31 +105,7 @@ const logger = winston.createLogger({
   )
 });
 
-function buildLogger(metaData) {
-  // const local = {
-  //   ...logger,
-  //   add: (...args) => {
-  //     return logger.add(...args);
-  //   },
-  //   log(...args) {
-  //     if (metaData) {
-  //       return logger.log(...args, metaData);
-  //     }
-  //     return logger.log(...args);
-  //   }
-  // };
-
-  // for (const level of Object.keys(logLevels.levels)) {
-  //   local[level] = (...args) => {
-  //     return local.log(level, ...args);
-  //   };
-  // }
-
-  // return local;
-  return logger.child(metaData);
-}
-
 module.exports = {
   logger,
-  buildLogger
+  buildLogger: logger.child.bind(logger)
 };

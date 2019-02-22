@@ -9,8 +9,11 @@
     "Jens Carlén"
   ],
   "version": "2.1.4",
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "scripts": {
-    "test": "concurrently -r 'mocha --exit' 'eslint . --cache' 'depcheck --ignores=depcheck'",
+    "test": "concurrently -r 'installed-check -e -i eslint' 'mocha --exit' 'eslint . --cache' 'depcheck --ignores=depcheck,installed-check'",
     "posttest": "eslint --cache .",
     "lint": "eslint --cache .",
     "format": "prettier **/*.js --write && eslint . --fix"
@@ -37,6 +40,7 @@
     "eslint": "^4.19.1",
     "eslint-plugin-json": "^1.4.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "installed-check": "^2.2.0",
     "mocha": "^5.2.0",
     "mocha-cakes-2": "^2.0.1",
     "prettier": "^1.16.4"

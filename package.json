@@ -10,7 +10,7 @@
   ],
   "version": "2.1.4",
   "scripts": {
-    "test": "mocha --exit && eslint . --cache && depcheck",
+    "test": "concurrently -r 'mocha --exit' 'eslint . --cache' 'depcheck --ignores=depcheck'",
     "posttest": "eslint --cache .",
     "lint": "eslint --cache .",
     "format": "prettier **/*.js --write && eslint . --fix"
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "concurrently": "^4.1.0",
     "depcheck": "^0.6.11",
     "eslint": "^4.19.1",
     "eslint-plugin-json": "^1.4.0",

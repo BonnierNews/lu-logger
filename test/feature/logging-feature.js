@@ -1,12 +1,27 @@
 "use strict";
 
-const {logger} = require("../../");
 const transport = require("../helpers/test-transport");
 const prometheusClient = require("prom-client");
+const proxyquire = require("proxyquire").noPreserveCache();
+
+const basePkg = require("../../package.json");
 
 Feature("Logging", () => {
+  const mockedPkg = Object.assign({}, basePkg);
+
+  const {logger} = proxyquire("../..", {
+    "./lib/prom-transport": proxyquire("../../lib/prom-transport", {
+      [`${process.cwd()}/package.json`]: mockedPkg
+    })
+  });
+  logger.add(transport);
+
   before(() => {
     transport.logs = [];
+  });
+
+  beforeEach(() => {
+    Object.assign(mockedPkg, basePkg);
   });
 
   Scenario("Logging debug with JSON format", () => {
@@ -50,6 +65,25 @@ Feature("Logging", () => {
       const logContent = transport.logs.shift();
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal("too big to log");
+    });
+  });
+
+  Scenario("Should support prefixed package names", () => {
+    let newLogger;
+
+    When("loading the logger in a prefixed package", () => {
+      mockedPkg.name = "@bonniernews/example";
+      newLogger = proxyquire("../..", {
+        "./lib/prom-transport": proxyquire("../../lib/prom-transport", {
+          [`${process.cwd()}/package.json`]: mockedPkg
+        })
+      }).logger;
+      newLogger.add(transport);
+    });
+
+    Then("should have a valid metric registered", () => {
+      // eslint-disable-next-line no-undef
+      should.exist(prometheusClient.register.getSingleMetric("example_logged_total"));
     });
   });
 

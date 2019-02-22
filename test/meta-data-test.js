@@ -1,9 +1,13 @@
 "use strict";
 
-const {logger: winston} = require("../");
 const transport = require("./helpers/test-transport");
 
+const proxyquire = require("proxyquire").noPreserveCache();
+
 describe("logging messages with default metaData", () => {
+  const {logger: winston} = proxyquire("../", {});
+  winston.add(transport);
+
   const data = {
     meta: {
       correlationId: "sample-correlation-id",

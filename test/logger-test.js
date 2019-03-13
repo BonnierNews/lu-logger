@@ -1,11 +1,14 @@
 "use strict";
 
 const logLevels = -require("../config/levels");
-const {logger} = require("../");
 const transport = require("./helpers/test-transport");
 const should = require("chai").should();
+const proxyquire = require("proxyquire").noPreserveCache();
 
 describe("logger", () => {
+  const {logger} = proxyquire("../", {});
+  logger.add(transport);
+
   before(() => {
     transport.logs = [];
   });

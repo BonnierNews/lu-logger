@@ -123,6 +123,58 @@ describe("logger", () => {
       const log = transport.logs.shift();
       log.metaData.should.eql({meta: data});
     });
+
+    it("should log data and metadata with only one", () => {
+      const data = {
+        correlationId: "sample-correlation-id"
+      };
+      logger.info("message", {one: 1}, {some: "data"}, data);
+      const log = transport.logs.shift();
+      log.message.should.eql("message { one: 1 } { some: 'data' }");
+      log.metaData.should.eql({meta: data});
+    });
+    it("should log data and metadata multiple", () => {
+      const data = {
+        correlationId: "sample-correlation-id"
+      };
+      logger.info("message", {one: 1}, data);
+      const log = transport.logs.shift();
+      log.message.should.eql("message { one: 1 }");
+      log.metaData.should.eql({meta: data});
+    });
+
+    it("should format log with metaData", () => {
+      const data = {
+        correlationId: "sample-correlation-id"
+      };
+      const routingKey = "baz";
+      const listener = "foo";
+      const message = {
+        id: "cd059ff6-c72d-4fa1-9886-f7be64ba3c51",
+        type: "event"
+      };
+      logger.info(`routingKey: ${routingKey}, listener ${listener}, message %j`, message, data);
+      const log = transport.logs.shift();
+      log.message.should.eql(
+        'routingKey: baz, listener foo, message {"id":"cd059ff6-c72d-4fa1-9886-f7be64ba3c51","type":"event"}'
+      );
+      log.metaData.should.eql({meta: data});
+    });
+
+    it("should format log witout metaData", () => {
+      const routingKey = "baz";
+      const listener = "foo";
+      const message = {
+        id: "cd059ff6-c72d-4fa1-9886-f7be64ba3c51",
+        type: "event"
+      };
+      logger.info(`routingKey: ${routingKey}, listener ${listener}, message %j`, message);
+      const log = transport.logs.shift();
+      log.message.should.eql(
+        'routingKey: baz, listener foo, message {"id":"cd059ff6-c72d-4fa1-9886-f7be64ba3c51","type":"event"}'
+      );
+      log.metaData.should.eql({});
+    });
   });
 
   describe("location", () => {

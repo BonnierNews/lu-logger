@@ -8,13 +8,12 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "2.1.4",
+  "version": "2.1.5",
   "engines": {
     "node": ">=8.0.0"
   },
   "scripts": {
-    "mocha": "nyc --reporter=lcov --reporter text mocha --exit",
-    "test": "concurrently -r 'installed-check -e -i eslint' 'npm run --silent mocha' 'eslint . --cache' 'depcheck --ignores=depcheck,installed-check'",
+    "test": "mocha --exit && eslint . --cache && depcheck",
     "posttest": "eslint --cache .",
     "lint": "eslint --cache .",
     "format": "prettier **/*.js --write && eslint . --fix"
@@ -36,15 +35,12 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "concurrently": "^4.1.0",
     "depcheck": "^0.6.11",
     "eslint": "^5.14.1",
     "eslint-plugin-json": "^1.4.0",
     "eslint-plugin-prettier": "^3.0.1",
-    "installed-check": "^2.2.0",
     "mocha": "^6.0.1",
     "mocha-cakes-2": "^2.0.1",
-    "nyc": "^13.3.0",
     "prettier": "^1.16.4",
     "proxyquire": "^2.1.0"
   }

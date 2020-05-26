@@ -8,7 +8,7 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "2.2.0",
+  "version": "2.3.0",
   "engines": {
     "node": ">=8.0.0"
   },

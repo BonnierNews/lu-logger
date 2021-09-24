@@ -8,9 +8,9 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "2.3.0",
+  "version": "2.3.1",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "scripts": {
     "test": "mocha --exit && eslint . --cache && depcheck",
@@ -34,14 +34,14 @@
     "winston-transport": "^3.2.1"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "depcheck": "^0.6.11",
-    "eslint": "^5.14.1",
-    "eslint-plugin-json": "^1.4.0",
-    "eslint-plugin-prettier": "^3.0.1",
-    "mocha": "^6.0.1",
-    "mocha-cakes-2": "^2.0.1",
-    "prettier": "^1.16.4",
-    "proxyquire": "^2.1.0"
+    "chai": "^4.3.4",
+    "depcheck": "^1.4.2",
+    "eslint": "^7.32.0",
+    "eslint-plugin-json": "^2",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mocha": "^8",
+    "mocha-cakes-2": "^3.3.0",
+    "prettier": "^2.4.1",
+    "proxyquire": "^2.1.3"
   }
 }

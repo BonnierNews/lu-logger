@@ -1,12 +1,12 @@
 {
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 2020
   },
   "env": {
     "node": true,
     "es6": true
   },
-  "extends": ["eslint:recommended"],
+  "extends": ["eslint:recommended", "plugin:json/recommended"],
   "plugins": ["json", "prettier"],
   "rules": {
     "prettier/prettier": "error",
@@ -70,8 +70,8 @@
     "prefer-arrow-callback": 2,
     "prefer-const": ["error", {"destructuring": "all"}],
     "prefer-template": 1,
+    "semi-spacing": [1, {"before": false, "after": true}],
     "space-before-blocks": 1,
-    "space-before-function-paren": [1, {"anonymous": "never", "named": "never"}],
     "space-infix-ops": 1,
     "space-unary-ops": [1, {"words": true, "nonwords": false}],
     "strict": [2, "global"],

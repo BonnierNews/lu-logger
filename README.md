@@ -1,5 +1,4 @@
 # lu-logger
-[![Build Status](https://travis-ci.org/BonnierNews/lu-logger.svg?branch=master)](https://travis-ci.org/BonnierNews/lu-logger)
 
 ## Purpose and features
 File name and line number of the log caller is also added when logging in debug level.

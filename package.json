@@ -8,9 +8,9 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "2.4.0",
+  "version": "3.0.0",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=12 <=16"
   },
   "scripts": {
     "test": "mocha --exit && eslint . --cache && depcheck",
@@ -18,7 +18,9 @@
     "lint": "eslint --cache .",
     "format": "prettier **/*.js --write && eslint . --fix"
   },
-  "repository": "https://github.com/BonnierNews/lu-logger.git",
+  "repository": "github:BonnierNews/lu-logger",
+  "homepage": "https://github.com/BonnierNews/lu-logger",
+  "bugs": "https://github.com/BonnierNews/lu-logger/issues",
   "keywords": [
     "logging",
     "logger"
@@ -30,7 +32,7 @@
     "lodash.isequal": "^4.5.0",
     "prom-client": "^14.0.0",
     "winston": "^3.3.3",
-    "winston-syslog": "github:BonnierNews/winston-syslog#v2.5.0-fork",
+    "winston-syslog": "github:BonnierNews/winston-syslog#~2.5.1-fork",
     "winston-transport": "^4.4.0"
   },
   "devDependencies": {

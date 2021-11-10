@@ -1,5 +1,5 @@
 # lu-logger
-![Build Status](https://github.com/BonnierNews/lu-logger/actions/workflows/nodejs.yml/badge.svg)
+![Node.js CI](https://github.com/BonnierNews/lu-logger/actions/workflows/nodejs.yml/badge.svg)
 
 ## Purpose and features
 File name and line number of the log caller is also added when logging in debug level.

@@ -10,7 +10,7 @@
   ],
   "version": "3.0.2",
   "engines": {
-    "node": ">=12 <=16"
+    "node": ">=12 <=18"
   },
   "scripts": {
     "test": "mocha --exit && eslint . --cache && depcheck",

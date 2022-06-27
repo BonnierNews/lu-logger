@@ -103,6 +103,8 @@ const logger = winston.createLogger({
   levels: logLevels.levels,
   colors: logLevel.colors,
   transports: transports,
+  exceptionHandlers: [new winston.transport.Console()],
+  exitOnError: config.envName !== "production",
   format: format.combine(
     format.metadata({key: "metaData"}),
     format(splatEntry)(),

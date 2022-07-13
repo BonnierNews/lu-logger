@@ -1,5 +1,5 @@
 apiVersion: backstage.io/v1alpha1
-kind: Component
+kind: Resource
 metadata:
   name: lu-logger
   description: The base logger for lu-apps
@@ -7,6 +7,6 @@ metadata:
     github.com/project-slug: BonnierNews/lu-logger
     backstage.io/techdocs-ref: dir:.
 spec:
-  type: service
+  type: tools
   lifecycle: production
   owner: bn-developer-data-infra

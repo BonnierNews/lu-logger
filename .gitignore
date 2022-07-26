@@ -5,6 +5,7 @@ yarn-error.log
 
 # Code coverage results
 /coverage
+/.nyc_output
 
 # Built package
 /*.tgz

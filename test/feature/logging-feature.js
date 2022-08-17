@@ -68,6 +68,34 @@ Feature("Logging", () => {
     });
   });
 
+  Scenario("Logging an api-key", () => {
+    const message = "Message";
+    const data = "x-api-key:8a1ba457-24bc-4941-b136-d401a717c223";
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal("Message /\\1SECRET/");
+    });
+  });
+
+  Scenario("Logging an api-key as message", () => {
+    const message = "x-api-key:8a1ba457-24bc-4941-b136-d401a717c223";
+    const data = "some-data";
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal("/\\1SECRET/ some-data");
+    });
+  });
+
   Scenario("Should support prefixed package names", () => {
     let newLogger;
 

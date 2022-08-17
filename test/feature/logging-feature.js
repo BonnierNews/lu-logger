@@ -68,6 +68,20 @@ Feature("Logging", () => {
     });
   });
 
+  Scenario("Logging a api-key", () => {
+    const message = "Message";
+    const data = "x-api-key:8a1ba457-24bc-4941-b136-d401a717c223";
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal("Message /\\1SECRET/");
+    });
+  });
+
   Scenario("Should support prefixed package names", () => {
     let newLogger;
 

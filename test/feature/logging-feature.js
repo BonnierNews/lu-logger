@@ -78,7 +78,7 @@ Feature("Logging", () => {
 
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
-      logContent.message.should.equal("Message /\\1SECRET/");
+      logContent.message.should.equal("Message x-api-key:SECRET");
     });
   });
 
@@ -92,7 +92,7 @@ Feature("Logging", () => {
 
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
-      logContent.message.should.equal("/\\1SECRET/ some-data");
+      logContent.message.should.equal("x-api-key:SECRET some-data");
     });
   });
 

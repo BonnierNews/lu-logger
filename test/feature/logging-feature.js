@@ -78,7 +78,7 @@ Feature("Logging", () => {
 
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
-      logContent.message.should.equal("Message /\\1SECRET/");
+      logContent.message.should.equal("Message x-api-key:SECRET");
     });
   });
 
@@ -92,7 +92,21 @@ Feature("Logging", () => {
 
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
-      logContent.message.should.equal("/\\1SECRET/ some-data");
+      logContent.message.should.equal("x-api-key:SECRET some-data");
+    });
+  });
+
+  Scenario("Logging an api-key as message, with quotes around the api key", () => {
+    const message = '"x-api-key":"8a1ba457-24bc-4941-b136-d401a717c223"';
+    const data = "some-data";
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal('"x-api-key":"SECRET" some-data');
     });
   });
 

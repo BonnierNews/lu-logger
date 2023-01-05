@@ -5,9 +5,12 @@ const prometheusClient = require("prom-client");
 const proxyquire = require("proxyquire").noPreserveCache();
 
 const basePkg = require("../../package.json");
+const nock = require("nock");
 
 Feature("Logging", () => {
   const mockedPkg = Object.assign({}, basePkg);
+
+  afterEachScenario(nock.cleanAll);
 
   const {logger} = proxyquire("../..", {
     "./lib/prom-transport": proxyquire("../../lib/prom-transport", {
@@ -136,6 +139,16 @@ Feature("Logging", () => {
       prometheusClient.register.resetMetrics();
     });
 
+    Given("Datadog is ready to receive our requests for logging", () => {
+      const serviceName = "lu-logger";
+      const ddSource = "nodejs";
+      const ddTags = encodeURIComponent("bn-department:bn-data,bn-env:non-prod,bn-env-specific:test,bn-app:lu-logger");
+      nock("https://http-intake.logs.datadoghq.eu")
+        .post(`/v1/input/some-api-key?service=${serviceName}&ddsource=${ddSource}&ddtags=${ddTags}`)
+        .times(25)
+        .reply(204);
+    });
+
     When("initializing the logger and doing some string logging", () => {
       logger.emergency(message);
 
@@ -192,6 +205,15 @@ Feature("Logging", () => {
 
     before(() => {
       prometheusClient.register.resetMetrics();
+    });
+
+    Given("Datadog is ready to receive our requests for logging", () => {
+      const serviceName = "lu-logger";
+      const ddSource = "nodejs";
+      const ddTags = encodeURIComponent("bn-department:bn-data,bn-env:non-prod,bn-env-specific:test,bn-app:lu-logger");
+      nock("https://http-intake.logs.datadoghq.eu")
+        .post(`/v1/input/some-api-key?service=${serviceName}&ddsource=${ddSource}&ddtags=${ddTags}`)
+        .reply(204);
     });
 
     When("initializing the logger and doing some string logging", () => {

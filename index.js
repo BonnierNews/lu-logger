@@ -1,20 +1,22 @@
 "use strict";
 
 const appConfig = require("exp-config");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 const winston = require("winston");
 const {format} = winston;
-const path = require("path");
-const fs = require("fs");
-const callingAppName = require(`${process.cwd()}/package.json`).name;
-const splatEntry = require("./lib/splat-entry");
-const logLevels = require("./config/levels");
-const {getLoc} = require("./lib/get-loc");
-const stringify = require("./lib/stringify");
-
 require("winston-syslog").Syslog; // eslint-disable-line no-unused-expressions
 
+const callingAppName = require(`${process.cwd()}/package.json`).name;
+const DatadogTransport = require("./lib/datadog-transport");
+const {getLoc} = require("./lib/get-loc");
+const logLevels = require("./config/levels");
+const splatEntry = require("./lib/splat-entry");
+const stringify = require("./lib/stringify");
+
 const PromTransport = require("./lib/prom-transport");
-const config = appConfig.logging;
+const config = appConfig.logging ?? {};
 
 if (config.truncateLog) {
   const fname = logFilename();
@@ -68,8 +70,6 @@ function defaultFormatter() {
 
 const transports = [new PromTransport()];
 
-const formatter = config.logJson ? format.json() : defaultFormatter();
-
 if (config.log === "file") {
   transports.push(
     new winston.transports.File({
@@ -98,6 +98,8 @@ if (config.sysLogOpts) {
   );
 }
 
+const formatter = config.logJson ? format.json() : defaultFormatter();
+
 const logger = winston.createLogger({
   level: config.logLevel || "info",
   levels: logLevels.levels,
@@ -116,6 +118,20 @@ const logger = winston.createLogger({
     formatter
   )
 });
+
+if (config.datadog?.apiKey) {
+  const env = process.env.NODE_ENV === "production" ? "prod" : "non-prod";
+  const dt = new DatadogTransport({
+    apiKey: config.datadog.apiKey,
+    hostname: os.hostname(),
+    service: callingAppName,
+    ddsource: "nodejs",
+    ddtags: `bn-department:bn-data,bn-env:${env},bn-env-specific:${process.env.NODE_ENV},bn-app:${callingAppName}`,
+    intakeRegion: "eu"
+  });
+
+  logger.add(dt);
+}
 
 module.exports = {
   logger,

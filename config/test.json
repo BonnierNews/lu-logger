@@ -4,6 +4,9 @@
     "logLevel": "debug",
     "logJson": true,
     "truncateLog": true,
-    "metricPrefix": "test"
+    "metricPrefix": "test",
+    "datadog": {
+      "apiKey": "some-api-key"
+    }
   }
 }

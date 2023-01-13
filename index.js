@@ -126,7 +126,7 @@ if (config.datadog?.apiKey) {
     hostname: os.hostname(),
     service: callingAppName,
     ddsource: "nodejs",
-    ddtags: `bn-department:bn-data,bn-env:${env},bn-env-specific:${process.env.NODE_ENV},bn-app:${callingAppName}`,
+    ddtags: `bn-department:bn-data,bn-team:data-infra,bn-env:${env},bn-env-specific:${process.env.NODE_ENV},bn-app:${callingAppName}`,
     intakeRegion: "eu"
   });
 

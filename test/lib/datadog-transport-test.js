@@ -16,6 +16,8 @@ const should = require("chai").should();
 const DatadogTransport = require("../../lib/datadog-transport");
 
 describe("Datadog transport", () => {
+  afterEachScenario(nock.cleanAll);
+
   describe("setup", () => {
     it("extends Winston transport", () => {
       should.equal(DatadogTransport.prototype instanceof Transport, true);

@@ -84,6 +84,16 @@ describe("Datadog transport", () => {
   });
 
   describe("DatadogTransport#log(info, callback)", () => {
+    let configOld;
+    before(() => {
+      configOld = config.logging.datadog;
+      config.logging.datadog.batchSize = 1;
+    });
+
+    after(() => {
+      config.logging.datadog = configOld;
+    });
+
     [
       {
         case: "transfers logs to the default intake",
@@ -190,16 +200,22 @@ describe("Datadog transport", () => {
         hostname: "hostname",
         intakeRegion: "eu"
       });
-      let hasBeenCalled = false;
-      const callback = () => {
-        hasBeenCalled = true;
+
+      let hasBeenCalledFirst = false;
+      const callbackFirst = () => {
+        hasBeenCalledFirst = true;
       };
 
-      await transport.log(info, callback);
-      should.equal(hasBeenCalled, false);
+      await transport.log(info, callbackFirst);
+      should.equal(hasBeenCalledFirst, true);
 
-      await transport.log(info, callback);
-      should.equal(hasBeenCalled, true);
+      let hasBeenCalledSecond = false;
+      const callbackSecond = () => {
+        hasBeenCalledSecond = true;
+      };
+
+      await transport.log(info, callbackSecond);
+      should.equal(hasBeenCalledSecond, true);
     });
   });
 });

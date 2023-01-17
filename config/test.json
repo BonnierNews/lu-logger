@@ -6,7 +6,8 @@
     "truncateLog": true,
     "metricPrefix": "test",
     "datadog": {
-      "apiKey": "some-api-key"
+      "apiKey": "some-api-key",
+      "batchSize": 1
     }
   }
 }

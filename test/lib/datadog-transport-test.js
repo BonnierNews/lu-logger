@@ -9,6 +9,7 @@
 
 "use strict";
 
+const config = require("exp-config");
 const nock = require("nock");
 const Transport = require("winston-transport");
 const should = require("chai").should();
@@ -16,6 +17,22 @@ const should = require("chai").should();
 const DatadogTransport = require("../../lib/datadog-transport");
 
 describe("Datadog transport", () => {
+  const info = {
+    dd: {
+      trace_id: "abc", // eslint-disable-line camelcase
+      span_id: "def" // eslint-disable-line camelcase
+    },
+    foo: "bar",
+    ddtags: "tag_a:value_a,tag_b:value_b"
+  };
+
+  const query = {
+    service: "service",
+    ddsource: "ddsource",
+    ddtags: "env:production,trace_id:abc,span_id:def,tag_a:value_a,tag_b:value_b",
+    hostname: "hostname"
+  };
+
   afterEachScenario(nock.cleanAll);
 
   describe("setup", () => {
@@ -87,27 +104,24 @@ describe("Datadog transport", () => {
           }
         })
           .post(
-            "/v1/input/apikey",
-            JSON.stringify({
-              dd: {
-                trace_id: "abc", // eslint-disable-line camelcase
-                span_id: "def" // eslint-disable-line camelcase
-              },
-              foo: "bar"
-            })
+            `/v1/input/${config.logging.datadog.apiKey}`,
+            JSON.stringify([
+              {
+                dd: {
+                  trace_id: "abc", // eslint-disable-line camelcase
+                  span_id: "def" // eslint-disable-line camelcase
+                },
+                foo: "bar"
+              }
+            ])
           )
-          .query({
-            service: "service",
-            ddsource: "ddsource",
-            ddtags: "env:production,trace_id:abc,span_id:def,tag_a:value_a,tag_b:value_b",
-            hostname: "hostname"
-          })
+          .query(query)
           .reply(204);
 
         const opts = Object.assign(
           {},
           {
-            apiKey: "apikey",
+            apiKey: config.logging.datadog.apiKey,
             service: "service",
             ddsource: "ddsource",
             ddtags: "env:production",
@@ -122,20 +136,70 @@ describe("Datadog transport", () => {
           hasBeenCalled = true;
         };
 
-        await transport.log(
-          {
-            dd: {
-              trace_id: "abc", // eslint-disable-line camelcase
-              span_id: "def" // eslint-disable-line camelcase
-            },
-            foo: "bar",
-            ddtags: "tag_a:value_a,tag_b:value_b"
-          },
-          callback
-        );
+        await transport.log(info, callback);
         should.equal(hasBeenCalled, true);
         should.equal(scope.isDone(), true);
       });
+    });
+  });
+
+  describe("DatadogTransport#log(info, callback) in batch", () => {
+    let configOld;
+    before(() => {
+      configOld = config.logging.datadog;
+      config.logging.datadog.batchSize = 2;
+    });
+
+    after(() => {
+      config.logging.datadog = configOld;
+    });
+
+    it("transfers logs to the EU intake", async () => {
+      nock("https://http-intake.logs.datadoghq.eu", {
+        reqheaders: {
+          "content-type": "application/json"
+        }
+      })
+        .post(
+          `/v1/input/${config.logging.datadog.apiKey}`,
+          JSON.stringify([
+            {
+              dd: {
+                trace_id: "abc", // eslint-disable-line camelcase
+                span_id: "def" // eslint-disable-line camelcase
+              },
+              foo: "bar"
+            },
+            {
+              dd: {
+                trace_id: "abc", // eslint-disable-line camelcase
+                span_id: "def" // eslint-disable-line camelcase
+              },
+              foo: "bar"
+            }
+          ])
+        )
+        .query(query)
+        .reply(204);
+
+      const transport = new DatadogTransport({
+        apiKey: config.logging.datadog.apiKey,
+        service: "service",
+        ddsource: "ddsource",
+        ddtags: "env:production",
+        hostname: "hostname",
+        intakeRegion: "eu"
+      });
+      let hasBeenCalled = false;
+      const callback = () => {
+        hasBeenCalled = true;
+      };
+
+      await transport.log(info, callback);
+      should.equal(hasBeenCalled, false);
+
+      await transport.log(info, callback);
+      should.equal(hasBeenCalled, true);
     });
   });
 });

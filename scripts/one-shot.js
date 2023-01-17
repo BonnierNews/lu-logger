@@ -1,9 +1,7 @@
 "use strict";
 
 const config = require("exp-config");
-config.logging.datadog = {
-  apiKey: "<find-it-use-it-love-it>"
-};
+config.logging.datadog.apiKey = "<find-it-use-it-love-it>";
 
 try {
   const {logger} = require("../index");

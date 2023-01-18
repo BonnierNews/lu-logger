@@ -7,7 +7,7 @@
     "metricPrefix": "test",
     "datadog": {
       "apiKey": "some-api-key",
-      "batchSize": 1
+      "batchSize": 2
     }
   }
 }

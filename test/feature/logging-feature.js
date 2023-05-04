@@ -99,6 +99,23 @@ Feature("Logging", () => {
     });
   });
 
+  Scenario("Logging an auth object as message", () => {
+    const message =
+      '{"auth":{"user":"K6586713_b57a4fjaslaa","pass":"12345RrQFut12345"},"correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';
+    const data = "some-data";
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal(
+        '{"auth":SECRET,"correlationId":"e91c70da-5156-1234-5678-451e863c1639"} some-data'
+      );
+    });
+  });
+
   Scenario("Logging an api-key as message, with quotes around the api key", () => {
     const message = '"x-api-key":"8a1ba457-24bc-4941-b136-d401a717c223"';
     const data = "some-data";

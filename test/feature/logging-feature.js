@@ -101,7 +101,7 @@ Feature("Logging", () => {
 
   Scenario("Logging an auth object as message", () => {
     const message =
-      '{"auth":{"user":"K6586713_b57a4fjaslaa","pass":"12345RrQFut12345"},"correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';
+      '{"auth":{"user":"some-user","pass":"some-password"},"correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';
     const data = "some-data";
 
     When("logging a huge message", () => {

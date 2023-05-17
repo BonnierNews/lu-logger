@@ -8,7 +8,7 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "4.3.1",
+  "version": "4.4.0",
   "engines": {
     "node": ">=16 <=18"
   },
@@ -37,13 +37,13 @@
     "opossum": "^7.0.1",
     "prom-client": "^14.1.0",
     "winston": "^3.8.2",
-    "winston-syslog": "github:BonnierNews/winston-syslog#~3.0.0-fork",
+    "winston-syslog": "^2.7.0",
     "winston-transport": "^4.5.0"
   },
   "devDependencies": {
     "chai": "^4.3.7",
     "depcheck": "^1.4.3",
-    "eslint": "^8.27.0",
+    "eslint": "^8.38.0",
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "mocha": "^10.1.0",

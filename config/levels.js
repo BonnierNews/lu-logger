@@ -1,7 +1,6 @@
 "use strict";
 
 const levels = {
-  emergency: 0,
   alert: 1,
   critical: 2,
   error: 3,
@@ -11,12 +10,10 @@ const levels = {
   debug: 7
 };
 const aliases = {
-  emergency: "emerg",
   critical: "crit"
 };
 
 const colors = {
-  emergency: "blue",
   alert: "darkred",
   critical: "cyan",
   error: "red",

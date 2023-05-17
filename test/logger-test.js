@@ -79,12 +79,6 @@ describe("logger", () => {
       });
     });
     describe("logLevel aliases", () => {
-      it("should mark emergency with emerg", () => {
-        logger.emergency("foobar");
-        const log = transport.logs.shift();
-        log.logLevel.should.eql("emerg");
-      });
-
       it("should mark critical with crit", () => {
         logger.critical("foobar");
         const log = transport.logs.shift();

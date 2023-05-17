@@ -167,7 +167,7 @@ Feature("Logging", () => {
     });
 
     When("initializing the logger and doing some string logging", () => {
-      logger.emergency(message);
+      logger.error(message);
 
       logger.alert(message);
       logger.alert(message);
@@ -196,7 +196,6 @@ Feature("Logging", () => {
 
     Then("the logCounter metric should be incremented", () => {
       const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
-      const emergencyCount = counterMetric.hashMap["level:emergency"].value;
       const alertCount = counterMetric.hashMap["level:alert"].value;
       const criticalCount = counterMetric.hashMap["level:critical"].value;
       const errorCount = counterMetric.hashMap["eventName:,level:error"].value;
@@ -205,10 +204,9 @@ Feature("Logging", () => {
       const infoCount = counterMetric.hashMap["level:info"].value;
       const debugCount = counterMetric.hashMap["level:debug"].value;
 
-      emergencyCount.should.eql(1);
       alertCount.should.eql(2);
       criticalCount.should.eql(3);
-      errorCount.should.eql(4);
+      errorCount.should.eql(5);
       warningCount.should.eql(5);
       noticeCount.should.eql(1);
       infoCount.should.eql(1);

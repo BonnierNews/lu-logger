@@ -206,7 +206,7 @@ Feature("Logging", () => {
 
       alertCount.should.eql(2);
       criticalCount.should.eql(3);
-      errorCount.should.eql(4);
+      errorCount.should.eql(5);
       warningCount.should.eql(5);
       noticeCount.should.eql(1);
       infoCount.should.eql(1);

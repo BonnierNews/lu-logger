@@ -89,7 +89,7 @@ Feature("Logging", () => {
     const message = "x-api-key:8a1ba457-24bc-4941-b136-d401a717c223";
     const data = "some-data";
 
-    When("logging a huge message", () => {
+    When("logging a message with an API Key", () => {
       logger.debug(message, data);
     });
 
@@ -104,7 +104,7 @@ Feature("Logging", () => {
       '{"auth":{"user":"some-user","pass":"some-password"},"correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';
     const data = "some-data";
 
-    When("logging a huge message", () => {
+    When("logging a message with an auth string", () => {
       logger.debug(message, data);
     });
 
@@ -235,7 +235,7 @@ Feature("Logging", () => {
       logger.error(message, {meta: {routingKey}});
     });
 
-    Then("the logCounter metric should be incremented", () => {
+    Then("the logCounter metric for eventName should be incremented", () => {
       const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
       const errorMetric = counterMetric.hashMap["eventName:event-name,level:error"];
       const errorCount = errorMetric.value;

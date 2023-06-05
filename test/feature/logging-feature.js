@@ -130,6 +130,23 @@ Feature("Logging", () => {
     });
   });
 
+  Scenario("Stripping email and names from log", () => {
+    const message =
+      '{"offerCode":"some-offer","email":"some.email@example.com","firstName":"Joe","lastName":"Bloggs","correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';
+    const data = "some-data";
+
+    When("logging a message with an email and first and last names", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal(
+        '{"offerCode":"some-offer","email":"sxxx@example.com","firstName":"Jxxx","lastName":"Bxxx","correlationId":"e91c70da-5156-1234-5678-451e863c1639"} some-data'
+      );
+    });
+  });
+
   Scenario("Should support prefixed package names", () => {
     let newLogger;
 

@@ -111,7 +111,24 @@ Feature("Logging", () => {
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
       logContent.message.should.equal(
-        '{"auth":SECRET,"correlationId":"e91c70da-5156-1234-5678-451e863c1639"} some-data'
+        '{"auth":"SECRET","correlationId":"e91c70da-5156-1234-5678-451e863c1639"} some-data'
+      );
+    });
+  });
+
+  Scenario("Logging an auth object as message, with escaped quotes", () => {
+    const message =
+      '{\\"auth\\":{\\"user\\":\\"some-user\\",\\"pass\\":\\"some-password\\"},\\"correlationId\\":\\"e91c70da-5156-1234-5678-451e863c1639\\"}';
+    const data = "some-data";
+
+    When("logging a message with an auth string", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal(
+        '{\\"auth\\":\\"SECRET\\",\\"correlationId\\":\\"e91c70da-5156-1234-5678-451e863c1639\\"} some-data'
       );
     });
   });

@@ -133,33 +133,31 @@ Feature("Logging", () => {
     });
   });
 
-  Scenario("Logging an api-key as message, with quotes around the api key", () => {
+  Scenario("Logging an api-key as message, with quotes around the api key, no data", () => {
     const message = '"x-api-key":"8a1ba457-24bc-4941-b136-d401a717c223"';
-    const data = "some-data";
 
-    When("logging a huge message", () => {
-      logger.debug(message, data);
+    When("logging a message with an x-api-key", () => {
+      logger.debug(message);
     });
 
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
-      logContent.message.should.equal('"x-api-key":"SECRET" some-data');
+      logContent.message.should.equal('"x-api-key":"SECRET"');
     });
   });
 
-  Scenario("Stripping email and names from log", () => {
+  Scenario("Stripping email and names from log, no data", () => {
     const message =
       '{"offerCode":"some-offer","email":"some.email@example.com","firstName":"Joe","lastName":"Bloggs","correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';
-    const data = "some-data";
 
     When("logging a message with an email and first and last names", () => {
-      logger.debug(message, data);
+      logger.debug(message);
     });
 
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
       logContent.message.should.equal(
-        '{"offerCode":"some-offer","email":"sxxx@example.com","firstName":"Jxxx","lastName":"Bxxx","correlationId":"e91c70da-5156-1234-5678-451e863c1639"} some-data'
+        '{"offerCode":"some-offer","email":"sxxx@example.com","firstName":"Jxxx","lastName":"Bxxx","correlationId":"e91c70da-5156-1234-5678-451e863c1639"}'
       );
     });
   });

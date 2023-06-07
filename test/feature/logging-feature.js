@@ -162,6 +162,22 @@ Feature("Logging", () => {
     });
   });
 
+  Scenario("Strip token from log, no data", () => {
+    const message =
+      '/_api/v2/expressen/token/d589b307-a109-4fd1-b621-cc4d5d8f1f32/ HTTP response for GET https://example.com/customer-token/v1/tokens/d589b307-a109-4fd1-b621-cc4d5d8f1f32 {token:d589b307-a109-4fd1-b621-cc4d5d8f1f32} {"token":"d589b307-a109-4fd1-b621-cc4d5d8f1f32"}';
+
+    When("logging a message with an email and first and last names", () => {
+      logger.debug(message);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal(
+        '/_api/v2/expressen/token/SECRET/ HTTP response for GET https://example.com/customer-token/v1/tokens/SECRET {token:SECRET} {"token":"SECRET"}'
+      );
+    });
+  });
+
   Scenario("Should support prefixed package names", () => {
     let newLogger;
 

@@ -111,22 +111,84 @@ Feature("Logging", () => {
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
       logContent.message.should.equal(
-        '{"auth":SECRET,"correlationId":"e91c70da-5156-1234-5678-451e863c1639"} some-data'
+        '{"auth":"SECRET","correlationId":"e91c70da-5156-1234-5678-451e863c1639"} some-data'
       );
     });
   });
 
-  Scenario("Logging an api-key as message, with quotes around the api key", () => {
-    const message = '"x-api-key":"8a1ba457-24bc-4941-b136-d401a717c223"';
+  Scenario("Logging an auth object as message, with escaped quotes", () => {
+    const message =
+      '{\\"auth\\":{\\"user\\":\\"some-user\\",\\"pass\\":\\"some-password\\"},\\"correlationId\\":\\"e91c70da-5156-1234-5678-451e863c1639\\"}';
     const data = "some-data";
 
-    When("logging a huge message", () => {
+    When("logging a message with an auth string", () => {
       logger.debug(message, data);
     });
 
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
-      logContent.message.should.equal('"x-api-key":"SECRET" some-data');
+      logContent.message.should.equal(
+        '{\\"auth\\":\\"SECRET\\",\\"correlationId\\":\\"e91c70da-5156-1234-5678-451e863c1639\\"} some-data'
+      );
+    });
+  });
+
+  Scenario("Logging an api-key as message, with quotes around the api key, no data", () => {
+    const message = '"x-api-key":"8a1ba457-24bc-4941-b136-d401a717c223"';
+
+    When("logging a message with an x-api-key", () => {
+      logger.debug(message);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal('"x-api-key":"SECRET"');
+    });
+  });
+
+  Scenario("Stripping email and names from log, no data", () => {
+    const message =
+      '{"offerCode":"some-offer","email":"some.email@example.com","firstName":"Joe","lastName":"Bloggs","correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';
+
+    When("logging a message with an email and first and last names", () => {
+      logger.debug(message);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal(
+        '{"offerCode":"some-offer","email":"sxxx@example.com","firstName":"Jxxx","lastName":"Bxxx","correlationId":"e91c70da-5156-1234-5678-451e863c1639"}'
+      );
+    });
+  });
+
+  Scenario("Strip token from log", () => {
+    const message =
+      "/_api/v2/expressen/token/d589b307-a109-4fd1-b621-cc4d5d8f1f32/ {token:d589b307-a109-4fd1-b621-cc4d5d8f1f32}";
+    const data = '{"token":"d589b307-a109-4fd1-b621-cc4d5d8f1f32"}';
+
+    When("logging a message with some tokens in it", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal('/_api/v2/expressen/token/SECRET/ {token:SECRET} {"token":"SECRET"}');
+    });
+  });
+
+  Scenario("Strip token from log, calling an endpoint", () => {
+    const message = `HTTP GET, https://example.com/customer-token/v1/tokens/d589b307-a109-4fd1-b621-cc4d5d8f1f32, params: {"something": "param"}`;
+
+    When("logging a message with a URL containing tokens", () => {
+      logger.debug(message);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal(
+        'HTTP GET, https://example.com/customer-token/v1/tokens/SECRET, params: {"something": "param"}'
+      );
     });
   });
 

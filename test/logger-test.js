@@ -127,6 +127,7 @@ describe("logger", () => {
       log.message.should.eql("message { one: 1 } { some: 'data' }");
       log.metaData.should.eql({meta: data});
     });
+
     it("should log data and metadata multiple", () => {
       const data = {
         correlationId: "sample-correlation-id"

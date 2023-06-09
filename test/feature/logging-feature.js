@@ -23,8 +23,14 @@ Feature("Logging", () => {
     transport.logs = [];
   });
 
+  let config;
   beforeEach(() => {
     Object.assign(mockedPkg, basePkg);
+    config = require("exp-config");
+  });
+
+  afterEach(() => {
+    config = require("exp-config");
   });
 
   Scenario("Logging debug with JSON format", () => {
@@ -50,7 +56,7 @@ Feature("Logging", () => {
     });
   });
 
-  Scenario("Logging a too big message JSON format", () => {
+  Scenario("Logging a too big message JSON format, default behaviour (in config)", () => {
     const message = "Message".repeat(9000);
     const data = {
       meta: {
@@ -64,10 +70,60 @@ Feature("Logging", () => {
       logger.debug(message, data);
     });
 
-    Then("log output should be trimmed", () => {
+    Then("log output should be a message that it is too big to log", () => {
       const logContent = transport.logs.shift();
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal("too big to log");
+    });
+  });
+
+  Scenario("Logging a too big message JSON format, default behaviour (no config)", () => {
+    const message = "Message".repeat(9000);
+    const data = {
+      meta: {
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
+      }
+    };
+
+    Given("we have no config for handling big logs", () => {
+      delete config.handleBigLogs;
+    });
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be a message that it is too big to log", () => {
+      const logContent = transport.logs.shift();
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal("too big to log");
+    });
+  });
+
+  Scenario("Logging a too big message JSON format, truncate it", () => {
+    const message = "Message".repeat(9000);
+    const data = {
+      meta: {
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
+      }
+    };
+
+    Given("we want to truncate big logs", () => {
+      config.handleBigLogs = "truncate";
+    });
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be the first 60 * 1024 bytes of the message", () => {
+      const logContent = transport.logs.shift();
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal(`${message.substring(0, 60 * 1024 - 3)}...`);
     });
   });
 
@@ -96,6 +152,20 @@ Feature("Logging", () => {
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
       logContent.message.should.equal("x-api-key:SECRET some-data");
+    });
+  });
+
+  Scenario("Logging a message including basic auth", () => {
+    const message = "amqp://user:password@example.com/some-path";
+    const data = "some-data";
+
+    When("logging a message with an API Key", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal("amqp://uxxx:SECRET@example.com/some-path some-data");
     });
   });
 

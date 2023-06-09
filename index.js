@@ -16,6 +16,7 @@ const splatEntry = require("./lib/splat-entry");
 const stringify = require("./lib/stringify");
 
 const PromTransport = require("./lib/prom-transport");
+const maxMessageLength = 60 * 1024;
 const config = appConfig.logging ?? {};
 
 if (config.truncateLog) {
@@ -38,8 +39,15 @@ function logFilename() {
 }
 
 function truncateTooLong(info) {
-  if (Buffer.byteLength(info.message, "utf8") > 60 * 1024) {
-    info.message = "too big to log";
+  if (Buffer.byteLength(info.message, "utf8") > maxMessageLength) {
+    switch (appConfig.handleBigLogs) {
+      case "truncate":
+        info.message = `${info.message.substring(0, maxMessageLength - 3)}...`;
+        break;
+      default:
+        info.message = "too big to log";
+        break;
+    }
   }
   return info;
 }
@@ -106,6 +114,7 @@ const logger = winston.createLogger({
   colors: logLevel.colors,
   transports: transports,
   exceptionHandlers: [new winston.transports.Console()],
+  rejectionHandlers: [new winston.transports.Console()], // log unhandled promise rejections to stdout
   exitOnError: appConfig.envName !== "production",
   format: format.combine(
     format.metadata({key: "metaData"}),

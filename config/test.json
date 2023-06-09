@@ -8,6 +8,7 @@
     "datadog": {
       "apiKey": "some-api-key",
       "batchSize": 2
-    }
+    },
+    "handleBigLogs": "default"
   }
 }

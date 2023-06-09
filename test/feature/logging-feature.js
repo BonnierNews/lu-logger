@@ -56,7 +56,7 @@ Feature("Logging", () => {
     });
   });
 
-  Scenario("Logging a too big message JSON format, default behaviour", () => {
+  Scenario("Logging a too big message JSON format, default behaviour (in config)", () => {
     const message = "Message".repeat(9000);
     const data = {
       meta: {
@@ -65,6 +65,31 @@ Feature("Logging", () => {
         correlationId: "sample-correlation-id"
       }
     };
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be a message that it is too big to log", () => {
+      const logContent = transport.logs.shift();
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal("too big to log");
+    });
+  });
+
+  Scenario("Logging a too big message JSON format, default behaviour (no config)", () => {
+    const message = "Message".repeat(9000);
+    const data = {
+      meta: {
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
+      }
+    };
+
+    Given("we have no config for handling big logs", () => {
+      delete config.handleBigLogs;
+    });
 
     When("logging a huge message", () => {
       logger.debug(message, data);

@@ -114,7 +114,6 @@ const logger = winston.createLogger({
   colors: logLevel.colors,
   transports: transports,
   exceptionHandlers: [new winston.transports.Console()],
-  rejectionHandlers: [new winston.transports.Console()], // log unhandled promise rejections to stdout
   exitOnError: appConfig.envName !== "production",
   format: format.combine(
     format.metadata({key: "metaData"}),

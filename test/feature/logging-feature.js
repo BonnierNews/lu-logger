@@ -155,6 +155,20 @@ Feature("Logging", () => {
     });
   });
 
+  Scenario("Logging a message including basic auth", () => {
+    const message = "amqp://user:password@example.com/some-path";
+    const data = "some-data";
+
+    When("logging a message with an API Key", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal("amqp://uxxx:SECRET@example.com/some-path some-data");
+    });
+  });
+
   Scenario("Logging an auth object as message", () => {
     const message =
       '{"auth":{"user":"some-user","pass":"some-password"},"correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';

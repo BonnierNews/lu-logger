@@ -23,8 +23,14 @@ Feature("Logging", () => {
     transport.logs = [];
   });
 
+  let config;
   beforeEach(() => {
     Object.assign(mockedPkg, basePkg);
+    config = require("exp-config");
+  });
+
+  afterEach(() => {
+    config = require("exp-config");
   });
 
   Scenario("Logging debug with JSON format", () => {
@@ -50,7 +56,7 @@ Feature("Logging", () => {
     });
   });
 
-  Scenario("Logging a too big message JSON format", () => {
+  Scenario("Logging a too big message JSON format, default behaviour", () => {
     const message = "Message".repeat(9000);
     const data = {
       meta: {
@@ -64,10 +70,61 @@ Feature("Logging", () => {
       logger.debug(message, data);
     });
 
-    Then("log output should be trimmed", () => {
+    Then("log output should be a message that it is too big to log", () => {
       const logContent = transport.logs.shift();
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal("too big to log");
+    });
+  });
+
+  Scenario("Logging a too big message JSON format, truncate it", () => {
+    const message = "Message".repeat(9000);
+    const data = {
+      meta: {
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
+      }
+    };
+
+    Given("we want to truncate big logs", () => {
+      config.handleBigLogs = "truncate";
+    });
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be the first 60 * 1024 bytes of the message", () => {
+      const logContent = transport.logs.shift();
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal(message.substring(0, 60 * 1024));
+    });
+  });
+
+  Scenario.skip("Logging a too big message JSON format, split it up", () => {
+    const message = "Message".repeat(9000);
+    const data = {
+      meta: {
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
+      }
+    };
+
+    Given("we want to split big logs", () => {
+      config.handleBigLogs = "split";
+    });
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be split", () => {
+      const logContent = transport.logs.shift();
+      console.log("logContent :>> ", logContent);
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal(message);
     });
   });
 

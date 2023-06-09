@@ -98,33 +98,7 @@ Feature("Logging", () => {
     Then("log output should be the first 60 * 1024 bytes of the message", () => {
       const logContent = transport.logs.shift();
       logContent.metaData.should.deep.equal(data);
-      logContent.message.should.equal(message.substring(0, 60 * 1024));
-    });
-  });
-
-  Scenario.skip("Logging a too big message JSON format, split it up", () => {
-    const message = "Message".repeat(9000);
-    const data = {
-      meta: {
-        createdAt: "2017-09-24-00:00T00:00:00.000Z",
-        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
-        correlationId: "sample-correlation-id"
-      }
-    };
-
-    Given("we want to split big logs", () => {
-      config.handleBigLogs = "split";
-    });
-
-    When("logging a huge message", () => {
-      logger.debug(message, data);
-    });
-
-    Then("log output should be split", () => {
-      const logContent = transport.logs.shift();
-      console.log("logContent :>> ", logContent);
-      logContent.metaData.should.deep.equal(data);
-      logContent.message.should.equal(message);
+      logContent.message.should.equal(`${message.substring(0, 60 * 1024 - 3)}...`);
     });
   });
 

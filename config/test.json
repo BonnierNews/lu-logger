@@ -9,6 +9,6 @@
       "apiKey": "some-api-key",
       "batchSize": 2
     },
-    "handleBigLogs": "too_big"
+    "handleBigLogs": "default"
   }
 }

@@ -42,10 +42,7 @@ function truncateTooLong(info) {
   if (Buffer.byteLength(info.message, "utf8") > maxMessageLength) {
     switch (appConfig.handleBigLogs) {
       case "truncate":
-        info.message = info.message.substring(0, maxMessageLength);
-        break;
-      case "split":
-        // Do something magic here
+        info.message = `${info.message.substring(0, maxMessageLength - 3)}...`;
         break;
       default:
         info.message = "too big to log";

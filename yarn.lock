@@ -1221,10 +1221,9 @@ globals@^13.19.0:
   dependencies:
     type-fest "^0.20.2"
 
-glossy@^0.1.7:
+"glossy@git+https://github.com/pavkriz/glossy#v0.1.7.1":
   version "0.1.7"
-  resolved "https://registry.yarnpkg.com/glossy/-/glossy-0.1.7.tgz#769b5984a96f6066ab9ea758224825ee6c210f0b"
-  integrity sha512-mTCC51QFadK75MvAhrL5nPVIP291NjML1guo10Sa7Yj04tJU4V++Vgm780NIddg9etQD9D8FM67hFGqM8EE2HQ==
+  resolved "git+https://github.com/pavkriz/glossy#efb47740b14defcaae289f98f43ae276cccd1a2f"
 
 graceful-fs@^4.1.15:
   version "4.2.11"
@@ -2452,12 +2451,11 @@ which@^2.0.1:
   dependencies:
     isexe "^2.0.0"
 
-winston-syslog@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/winston-syslog/-/winston-syslog-2.7.0.tgz#b209ad4bab2aa8bec682c37fe4af791b82922c67"
-  integrity sha512-w+V0lHO2W6XqcYlvVi4DrblwJShvQbAaruRvUlMPzH1Z+dYvUvo4ra2hhoF6UNTFmC9LBltcTG05ypYL6S/B8A==
+"winston-syslog@github:BonnierNews/winston-syslog#~3.0.2":
+  version "3.0.2"
+  resolved "https://codeload.github.com/BonnierNews/winston-syslog/tar.gz/96f9499c62978ae9e09aee1ba7203568e6ffe5b3"
   dependencies:
-    glossy "^0.1.7"
+    glossy "git+https://github.com/pavkriz/glossy#v0.1.7.1"
   optionalDependencies:
     unix-dgram "2.0.6"
 

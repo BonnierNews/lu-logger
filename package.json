@@ -8,7 +8,7 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "6.0.0",
+  "version": "6.0.1",
   "engines": {
     "node": ">=16 <=18"
   },
@@ -37,7 +37,7 @@
     "opossum": "^7.0.1",
     "prom-client": "^14.1.0",
     "winston": "^3.8.2",
-    "winston-syslog": "github:BonnierNews/winston-syslog#~3.0.2",
+    "winston-syslog": "github:BonnierNews/winston-syslog#semver:~3.0.2",
     "winston-transport": "^4.5.0"
   },
   "devDependencies": {

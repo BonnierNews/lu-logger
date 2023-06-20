@@ -117,11 +117,11 @@ const logger = winston.createLogger({
   exitOnError: appConfig.envName !== "production",
   format: format.combine(
     format.metadata({key: "metaData"}),
+    format(truncateTooLong)(),
     format(splatEntry)(),
     format.timestamp(),
     format(logLevel)(),
     format(location)(),
-    format(truncateTooLong)(),
     format(metaDataFormat)(),
     formatter
   )

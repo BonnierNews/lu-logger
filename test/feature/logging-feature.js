@@ -128,7 +128,7 @@ Feature("Logging", () => {
   });
 
   Scenario("Logging a huge message JSON format, truncate it", () => {
-    const message = "{email: test@example.com}".repeat(9000000);
+    const message = "{email: test@example.com}".repeat(9000000); // more than 200MB
     const data = {
       meta: {
         createdAt: "2017-09-24-00:00T00:00:00.000Z",

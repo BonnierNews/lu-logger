@@ -127,6 +127,45 @@ Feature("Logging", () => {
     });
   });
 
+  Scenario("Logging a huge message JSON format, truncate it", () => {
+    const message = "{email: test@example.com}".repeat(9000000); // more than 200MB
+    const data = {
+      meta: {
+        createdAt: "2017-09-24-00:00T00:00:00.000Z",
+        updatedAt: "2017-09-24-00:00T00:00:00.000Z",
+        correlationId: "sample-correlation-id"
+      }
+    };
+
+    Given("we want to truncate big logs", () => {
+      config.handleBigLogs = "truncate";
+    });
+
+    When("logging a huge message", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be the first 60 * 1024 bytes of the message", () => {
+      const logContent = transport.logs.shift();
+      logContent.metaData.should.deep.equal(data);
+      logContent.message.should.equal(`${message.substring(0, 60 * 1024 - 3)}...`);
+    });
+  });
+
+  Scenario("Logging an error", () => {
+    const message = "Message";
+    const data = new Error("It's broken");
+
+    When("logging a message containing an error", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should include the whole error", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.include("Message It's broken Error: It's broken");
+    });
+  });
+
   Scenario("Logging an api-key", () => {
     const message = "Message";
     const data = "x-api-key:8a1ba457-24bc-4941-b136-d401a717c223";
@@ -166,6 +205,20 @@ Feature("Logging", () => {
     Then("log output should be trimmed", () => {
       const logContent = transport.logs.shift();
       logContent.message.should.equal("amqp://uxxx:SECRET@example.com/some-path some-data");
+    });
+  });
+
+  Scenario("Logging a message including basic auth and an email", () => {
+    const message = "amqp://user:password@example.com/some-path";
+    const data = '{"email":"test@example.com"}';
+
+    When("logging a message with an API Key", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal('amqp://uxxx:SECRET@example.com/some-path {"email":"txxx@example.com"}');
     });
   });
 

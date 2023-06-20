@@ -13,6 +13,7 @@ const DatadogTransport = require("./lib/datadog-transport");
 const {getLoc} = require("./lib/get-loc");
 const logLevels = require("./config/levels");
 const splatEntry = require("./lib/splat-entry");
+const cleanEntry = require("./lib/clean-entry");
 const stringify = require("./lib/stringify");
 
 const PromTransport = require("./lib/prom-transport");
@@ -117,8 +118,9 @@ const logger = winston.createLogger({
   exitOnError: appConfig.envName !== "production",
   format: format.combine(
     format.metadata({key: "metaData"}),
-    format(truncateTooLong)(),
     format(splatEntry)(),
+    format(truncateTooLong)(),
+    format(cleanEntry)(),
     format.timestamp(),
     format(logLevel)(),
     format(location)(),

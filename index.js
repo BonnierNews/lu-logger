@@ -19,6 +19,7 @@ const stringify = require("./lib/stringify");
 const PromTransport = require("./lib/prom-transport");
 const maxMessageLength = 60 * 1024;
 const config = appConfig.logging ?? {};
+const {logRetention = "14d"} = config;
 
 if (config.truncateLog) {
   const fname = logFilename();
@@ -136,7 +137,7 @@ if (config.datadog?.apiKey) {
     hostname: os.hostname(),
     service: callingAppName,
     ddsource: "nodejs",
-    ddtags: `bn-department:bn-data,bn-team:data-infra,bn-env:${env},bn-env-specific:${process.env.NODE_ENV},bn-app:${callingAppName}`,
+    ddtags: `bn-department:bn-data,bn-team:data-infra,bn-env:${env},bn-env-specific:${process.env.NODE_ENV},bn-app:${callingAppName},bn-retention:${logRetention}`,
     intakeRegion: "eu"
   });
 

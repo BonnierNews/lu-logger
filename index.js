@@ -5,13 +5,10 @@ const winston = require("winston");
 const {format} = winston;
 const path = require("path");
 const fs = require("fs");
-const callingAppName = require(`${process.cwd()}/package.json`).name;
 const splatEntry = require("./lib/splat-entry");
 const logLevels = require("./config/levels");
 const {getLoc} = require("./lib/get-loc");
 const stringify = require("./lib/stringify");
-
-require("winston-syslog").Syslog; // eslint-disable-line no-unused-expressions
 
 const PromTransport = require("./lib/prom-transport");
 const config = appConfig.logging;
@@ -80,22 +77,6 @@ if (config.log === "file") {
 
 if (config.log === "stdout") {
   transports.push(new winston.transports.Console());
-}
-
-if (config.sysLogOpts) {
-  transports.push(
-    new winston.transports.Syslog(
-      Object.assign(
-        {
-          type: "RFC5424",
-          localhost: process.env.HOSTNAME,
-          app_name: callingAppName, // eslint-disable-line camelcase
-          eol: "\n"
-        },
-        config.sysLogOpts
-      )
-    )
-  );
 }
 
 const logger = winston.createLogger({

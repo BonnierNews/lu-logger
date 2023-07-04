@@ -32,7 +32,6 @@
     "lodash.isequal": "^4.5.0",
     "prom-client": "^14.0.0",
     "winston": "^3.3.3",
-    "winston-syslog": "github:BonnierNews/winston-syslog#~2.5.1-fork",
     "winston-transport": "^4.4.0"
   },
   "devDependencies": {

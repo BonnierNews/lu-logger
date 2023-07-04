@@ -5,10 +5,6 @@
     "logJson": true,
     "truncateLog": true,
     "metricPrefix": "test",
-    "datadog": {
-      "apiKey": "some-api-key",
-      "batchSize": 2
-    },
     "handleBigLogs": "default"
   }
 }

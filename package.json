@@ -10,14 +10,15 @@
   ],
   "version": "6.0.3",
   "engines": {
-    "node": ">=16 <=18"
+    "node": ">=16 <=18",
+    "yarn": "please use npm"
   },
   "scripts": {
     "test": "mocha --exit && eslint . --cache && depcheck",
     "posttest": "eslint --cache .",
     "lint": "eslint --cache .",
     "format": "prettier **/*.js --write && eslint . --fix",
-    "coverage": "nyc yarn test",
+    "coverage": "nyc npm test",
     "check-coverage": "nyc check-coverage"
   },
   "repository": "github:BonnierNews/lu-logger",

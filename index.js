@@ -87,6 +87,10 @@ if (config.log === "stdout") {
   transports.push(new winston.transports.Console());
 }
 
+if (config.log === "dev/null") {
+  transports.length = 0;
+}
+
 const formatter = config.logJson ? format.json() : defaultFormatter();
 
 const logger = winston.createLogger({

@@ -2,14 +2,10 @@
 
 const appConfig = require("exp-config");
 const fs = require("fs");
-const os = require("os");
 const path = require("path");
 const winston = require("winston");
 const {format} = winston;
-require("winston-syslog").Syslog; // eslint-disable-line no-unused-expressions
 
-const callingAppName = require(`${process.cwd()}/package.json`).name;
-const DatadogTransport = require("./lib/datadog-transport");
 const {getLoc} = require("./lib/get-loc");
 const logLevels = require("./config/levels");
 const splatEntry = require("./lib/splat-entry");
@@ -19,7 +15,6 @@ const stringify = require("./lib/stringify");
 const PromTransport = require("./lib/prom-transport");
 const maxMessageLength = 60 * 1024;
 const config = appConfig.logging ?? {};
-const {logRetention = "14d"} = config;
 
 if (config.truncateLog) {
   const fname = logFilename();
@@ -92,22 +87,6 @@ if (config.log === "stdout") {
   transports.push(new winston.transports.Console());
 }
 
-if (config.sysLogOpts) {
-  transports.push(
-    new winston.transports.Syslog(
-      Object.assign(
-        {
-          type: "RFC5424",
-          localhost: process.env.HOSTNAME,
-          app_name: callingAppName, // eslint-disable-line camelcase
-          eol: "\n"
-        },
-        config.sysLogOpts
-      )
-    )
-  );
-}
-
 const formatter = config.logJson ? format.json() : defaultFormatter();
 
 const logger = winston.createLogger({
@@ -129,20 +108,6 @@ const logger = winston.createLogger({
     formatter
   )
 });
-
-if (config.datadog?.apiKey) {
-  const env = process.env.NODE_ENV === "production" ? "prod" : "non-prod";
-  const dt = new DatadogTransport({
-    apiKey: config.datadog.apiKey,
-    hostname: os.hostname(),
-    service: callingAppName,
-    ddsource: "nodejs",
-    ddtags: `bn-department:bn-data,bn-team:data-infra,bn-env:${env},bn-env-specific:${process.env.NODE_ENV},bn-app:${callingAppName},bn-retention:${logRetention}`,
-    intakeRegion: "eu"
-  });
-
-  logger.add(dt);
-}
 
 module.exports = {
   logger,

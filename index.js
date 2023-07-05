@@ -87,7 +87,7 @@ if (config.log === "stdout") {
   transports.push(new winston.transports.Console());
 }
 
-if (config.log === "dev/null") {
+if (config.log === "/dev/null") {
   transports.length = 0;
 }
 

@@ -222,6 +222,39 @@ Feature("Logging", () => {
     });
   });
 
+  Scenario("Logging a reply from credentials", () => {
+    const message = "HTTP response for POST https://bn-credentials-production.bnu.bn.nr/credentials/user-lookup";
+    const data = JSON.stringify({
+      id: "dn://splus/12345678",
+      type: "credentials__user",
+      attributes: {
+        userId: "dn://splus/12345678",
+        email: "someemail@something.com",
+        verifiedEmail: true,
+        lastLogin: "2023-07-02T10:28:10.625Z",
+        lastActive: "2023-07-02T10:28:10.625Z",
+        properties: {
+          firstName: "Some",
+          lastName: "Name"
+        }
+      },
+      meta: {
+        correlationId: "9916b873-96e6-44ef-9ef9-529e488907e5"
+      }
+    });
+
+    When("logging a message with a response from credentials", () => {
+      logger.debug(message, data);
+    });
+
+    Then("log output should be trimmed", () => {
+      const logContent = transport.logs.shift();
+      logContent.message.should.equal(
+        'HTTP response for POST https://bn-credentials-production.bnu.bn.nr/credentials/user-lookup {"id":"dn://splus/12345678","type":"credentials__user","attributes":{"userId":"dn://splus/12345678","email":"sxxx@something.com","verifiedEmail":true,"lastLogin":"2023-07-02T10:28:10.625Z","lastActive":"2023-07-02T10:28:10.625Z","properties":{"firstName":"Sxxx","lastName":"Nxxx"}},"meta":{"correlationId":"9916b873-96e6-44ef-9ef9-529e488907e5"}}'
+      );
+    });
+  });
+
   Scenario("Logging an auth object as message", () => {
     const message =
       '{"auth":{"user":"some-user","pass":"some-password"},"correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';

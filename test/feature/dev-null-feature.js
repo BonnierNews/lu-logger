@@ -14,7 +14,7 @@ Feature("Logging", () => {
       const mockedPkg = Object.assign({}, basePkg);
       Object.assign(mockedPkg, basePkg);
       config = require("exp-config");
-      config.logging.log = "dev/null";
+      config.logging.log = "/dev/null";
       const _logger = proxyquire("../../", {[`${process.cwd()}/package.json`]: mockedPkg});
       logger = _logger.logger;
     });

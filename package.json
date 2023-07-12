@@ -8,7 +8,7 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "7.0.1",
+  "version": "7.0.2",
   "engines": {
     "node": ">=16 <=18",
     "yarn": "please use npm"
@@ -43,11 +43,11 @@
     "depcheck": "^1.4.3",
     "eslint": "^8.38.0",
     "eslint-plugin-json": "^3.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.0.0",
     "mocha": "^10.1.0",
     "mocha-cakes-2": "^3.3.0",
     "nyc": "^15.1.0",
-    "prettier": "^2.7.1",
+    "prettier": "^3.0.0",
     "proxyquire": "^2.1.3"
   }
 }

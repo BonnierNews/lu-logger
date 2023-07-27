@@ -12,11 +12,7 @@ Feature("Logging", () => {
 
   afterEachScenario(nock.cleanAll);
 
-  const {logger} = proxyquire("../..", {
-    "./lib/prom-transport": proxyquire("../../lib/prom-transport", {
-      [`${process.cwd()}/package.json`]: mockedPkg
-    })
-  });
+  const { logger } = proxyquire("../..", { "./lib/prom-transport": proxyquire("../../lib/prom-transport", { [`${process.cwd()}/package.json`]: mockedPkg }) });
   logger.add(transport);
 
   before(() => {
@@ -39,8 +35,8 @@ Feature("Logging", () => {
       meta: {
         createdAt: "2017-09-24-00:00T00:00:00.000Z",
         updatedAt: "2017-09-24-00:00T00:00:00.000Z",
-        correlationId: "sample-correlation-id"
-      }
+        correlationId: "sample-correlation-id",
+      },
     };
 
     When("doing some JSON logging", () => {
@@ -52,7 +48,7 @@ Feature("Logging", () => {
       logContent.logLevel.should.equal("debug");
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(message);
-      logContent.location.should.be.ok; // eslint-disable-line no-unused-expressions
+      logContent.location.should.be.ok;
     });
   });
 
@@ -62,8 +58,8 @@ Feature("Logging", () => {
       meta: {
         createdAt: "2017-09-24-00:00T00:00:00.000Z",
         updatedAt: "2017-09-24-00:00T00:00:00.000Z",
-        correlationId: "sample-correlation-id"
-      }
+        correlationId: "sample-correlation-id",
+      },
     };
 
     When("logging a huge message", () => {
@@ -83,8 +79,8 @@ Feature("Logging", () => {
       meta: {
         createdAt: "2017-09-24-00:00T00:00:00.000Z",
         updatedAt: "2017-09-24-00:00T00:00:00.000Z",
-        correlationId: "sample-correlation-id"
-      }
+        correlationId: "sample-correlation-id",
+      },
     };
 
     Given("we have no config for handling big logs", () => {
@@ -108,8 +104,8 @@ Feature("Logging", () => {
       meta: {
         createdAt: "2017-09-24-00:00T00:00:00.000Z",
         updatedAt: "2017-09-24-00:00T00:00:00.000Z",
-        correlationId: "sample-correlation-id"
-      }
+        correlationId: "sample-correlation-id",
+      },
     };
 
     Given("we want to truncate big logs", () => {
@@ -133,8 +129,8 @@ Feature("Logging", () => {
       meta: {
         createdAt: "2017-09-24-00:00T00:00:00.000Z",
         updatedAt: "2017-09-24-00:00T00:00:00.000Z",
-        correlationId: "sample-correlation-id"
-      }
+        correlationId: "sample-correlation-id",
+      },
     };
 
     Given("we want to truncate big logs", () => {
@@ -235,12 +231,10 @@ Feature("Logging", () => {
         lastActive: "2023-07-02T10:28:10.625Z",
         properties: {
           firstName: "Some",
-          lastName: "Name"
-        }
+          lastName: "Name",
+        },
       },
-      meta: {
-        correlationId: "9916b873-96e6-44ef-9ef9-529e488907e5"
-      }
+      meta: { correlationId: "9916b873-96e6-44ef-9ef9-529e488907e5" },
     });
 
     When("logging a message with a response from credentials", () => {
@@ -334,7 +328,7 @@ Feature("Logging", () => {
   });
 
   Scenario("Strip token from log, calling an endpoint", () => {
-    const message = `HTTP GET, https://example.com/customer-token/v1/tokens/d589b307-a109-4fd1-b621-cc4d5d8f1f32, params: {"something": "param"}`;
+    const message = "HTTP GET, https://example.com/customer-token/v1/tokens/d589b307-a109-4fd1-b621-cc4d5d8f1f32, params: {\"something\": \"param\"}";
 
     When("logging a message with a URL containing tokens", () => {
       logger.debug(message);
@@ -353,11 +347,7 @@ Feature("Logging", () => {
 
     When("loading the logger in a prefixed package", () => {
       mockedPkg.name = "@bonniernews/example";
-      newLogger = proxyquire("../..", {
-        "./lib/prom-transport": proxyquire("../../lib/prom-transport", {
-          [`${process.cwd()}/package.json`]: mockedPkg
-        })
-      }).logger;
+      newLogger = proxyquire("../..", { "./lib/prom-transport": proxyquire("../../lib/prom-transport", { [`${process.cwd()}/package.json`]: mockedPkg }) }).logger;
       newLogger.add(transport);
     });
 
@@ -450,7 +440,7 @@ Feature("Logging", () => {
     });
 
     When("initializing the logger and doing some string logging", () => {
-      logger.error(message, {meta: {routingKey}});
+      logger.error(message, { meta: { routingKey } });
     });
 
     Then("the logCounter metric for eventName should be incremented", () => {
@@ -459,7 +449,7 @@ Feature("Logging", () => {
       const errorCount = errorMetric.value;
       const errorLabels = errorMetric.labels;
       errorCount.should.eql(1);
-      errorLabels.should.eql({level: "error", eventName: "event-name"});
+      errorLabels.should.eql({ level: "error", eventName: "event-name" });
     });
   });
 });

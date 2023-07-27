@@ -15,7 +15,7 @@ Feature("Logging", () => {
       Object.assign(mockedPkg, basePkg);
       config = require("exp-config");
       config.logging.log = "/dev/null";
-      const _logger = proxyquire("../../", {[`${process.cwd()}/package.json`]: mockedPkg});
+      const _logger = proxyquire("../../", { [`${process.cwd()}/package.json`]: mockedPkg });
       logger = _logger.logger;
     });
 
@@ -24,8 +24,8 @@ Feature("Logging", () => {
       meta: {
         createdAt: "2017-09-24-00:00T00:00:00.000Z",
         updatedAt: "2017-09-24-00:00T00:00:00.000Z",
-        correlationId: "sample-correlation-id"
-      }
+        correlationId: "sample-correlation-id",
+      },
     };
 
     When("doing some JSON logging", () => {

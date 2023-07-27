@@ -7,11 +7,9 @@ const levels = {
   warning: 4,
   notice: 5,
   info: 6,
-  debug: 7
+  debug: 7,
 };
-const aliases = {
-  critical: "crit"
-};
+const aliases = { critical: "crit" };
 
 const colors = {
   alert: "darkred",
@@ -20,11 +18,11 @@ const colors = {
   warning: "yellow",
   notice: "magenta",
   info: "green",
-  debug: "gray"
+  debug: "gray",
 };
 
 module.exports = {
   levels,
   aliases,
-  colors
+  colors,
 };

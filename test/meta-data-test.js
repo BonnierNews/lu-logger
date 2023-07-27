@@ -5,14 +5,14 @@ const transport = require("./helpers/test-transport");
 const proxyquire = require("proxyquire").noPreserveCache();
 
 describe("logging messages with default metaData", () => {
-  const {logger: winston} = proxyquire("../", {});
+  const { logger: winston } = proxyquire("../", {});
   winston.add(transport);
 
   const data = {
     meta: {
       correlationId: "sample-correlation-id",
-      eventName: "someEvent"
-    }
+      eventName: "someEvent",
+    },
   };
   before(() => {
     transport.logs = [];
@@ -28,7 +28,7 @@ describe("logging messages with default metaData", () => {
 
   it("should log a message with metaData and splat", () => {
     const logger = winston.child(data);
-    logger.info("some message", "one", {true: false});
+    logger.info("some message", "one", { true: false });
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");
     log.metaData.should.eql(data);
@@ -40,7 +40,7 @@ describe("logging messages with default metaData", () => {
     const listener = "listenerFn";
     const message = {
       id: "someid",
-      type: "message-type"
+      type: "message-type",
     };
     logger.info(`routingKey: ${routingKey}, listener ${listener}, message %j`, message);
     const log = transport.logs.shift();
@@ -58,7 +58,7 @@ describe("logging messages with default metaData", () => {
 
   it("should get correct location", () => {
     const logger = winston.child(data);
-    logger.info("some message", "one", {true: false});
+    logger.info("some message", "one", { true: false });
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");
     log.location.should.include("test/meta-data-test.js");

@@ -10,7 +10,7 @@ describe("getting event name from routing key", () => {
     getEventName({}).should.eql("");
   });
   it("should return empty string if logObj.meta does not have routingKey", () => {
-    getEventName({meta: {}}).should.eql("");
+    getEventName({ meta: {} }).should.eql("");
   });
   it("should return empty string if routing key is empty", () => {
     getEventName(createLogObj("")).should.eql("");
@@ -33,9 +33,5 @@ describe("getting event name from routing key", () => {
 });
 
 function createLogObj(routingKey) {
-  return {
-    meta: {
-      routingKey
-    }
-  };
+  return { meta: { routingKey } };
 }

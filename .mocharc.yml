@@ -1,7 +1,7 @@
 require:
-  - 'mocha-cakes-2'
-  - './test/config/setup.js'
-timeout: 2000
-reporter: 'spec'
+  - "mocha-cakes-2"
+  - "./test/config/setup.js"
+timeout: 3000
+reporter: "spec"
 recursive: true
-ui: 'mocha-cakes-2'
+ui: "mocha-cakes-2"

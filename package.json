@@ -14,7 +14,7 @@
     "yarn": "please use npm"
   },
   "scripts": {
-    "test": "mocha --exit && eslint . --cache && depcheck",
+    "test": "mocha --exit && eslint . --ext .js,.json --cache && depcheck",
     "posttest": "eslint --cache .",
     "lint": "eslint --cache .",
     "format": "prettier **/*.js --write && eslint . --fix",

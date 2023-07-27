@@ -4,9 +4,9 @@ const appConfig = require("exp-config");
 const fs = require("fs");
 const path = require("path");
 const winston = require("winston");
-const {format} = winston;
+const { format } = winston;
 
-const {getLoc} = require("./lib/get-loc");
+const { getLoc } = require("./lib/get-loc");
 const logLevels = require("./config/levels");
 const splatEntry = require("./lib/splat-entry");
 const cleanEntry = require("./lib/clean-entry");
@@ -52,7 +52,7 @@ function truncateTooLong(info) {
 function metaDataFormat(info) {
   const meta = info.metaData && info.metaData.meta;
   if (!meta && Object.keys(info.metaData).length > 0) {
-    info.metaData = {meta: info.metaData};
+    info.metaData = { meta: info.metaData };
   }
   return info;
 }
@@ -61,25 +61,23 @@ function defaultFormatter() {
   return format.printf((info) => {
     const meta = Object.keys(info).reduce(
       (acc, key) => {
-        if (!["message", "metaData", "level"].includes(key)) {
+        if (![ "message", "metaData", "level" ].includes(key)) {
           acc[key] = info[key];
         }
         return acc;
       },
-      {...info.metaData}
+      { ...info.metaData }
     );
 
     return `${info.timestamp} - ${info.level}: ${info.message}\t${stringify(meta)}`;
   });
 }
 
-const transports = [new PromTransport()];
+const transports = [ new PromTransport() ];
 
 if (config.log === "file") {
   transports.push(
-    new winston.transports.File({
-      filename: logFilename()
-    })
+    new winston.transports.File({ filename: logFilename() })
   );
 }
 
@@ -97,11 +95,11 @@ const logger = winston.createLogger({
   level: config.logLevel || "info",
   levels: logLevels.levels,
   colors: logLevel.colors,
-  transports: transports,
-  exceptionHandlers: [new winston.transports.Console()],
+  transports,
+  exceptionHandlers: [ new winston.transports.Console() ],
   exitOnError: appConfig.envName !== "production",
   format: format.combine(
-    format.metadata({key: "metaData"}),
+    format.metadata({ key: "metaData" }),
     format(splatEntry)(),
     format(truncateTooLong)(),
     format(cleanEntry)(),
@@ -110,10 +108,10 @@ const logger = winston.createLogger({
     format(location)(),
     format(metaDataFormat)(),
     formatter
-  )
+  ),
 });
 
 module.exports = {
   logger,
-  buildLogger: logger.child.bind(logger)
+  buildLogger: logger.child.bind(logger),
 };

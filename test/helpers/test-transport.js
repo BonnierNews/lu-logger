@@ -14,7 +14,7 @@ class CustomTransport extends Transport {
       info._message = message;
       message = JSON.parse(message)["@message"];
     }
-    this.logs.push({...info, message});
+    this.logs.push({ ...info, message });
     callback();
   }
 }

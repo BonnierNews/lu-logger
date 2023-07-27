@@ -8,7 +8,7 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "7.0.2",
+  "version": "7.0.3",
   "engines": {
     "node": ">=16 <=18",
     "yarn": "please use npm"
@@ -18,8 +18,8 @@
     "posttest": "eslint --cache .",
     "lint": "eslint --cache .",
     "format": "prettier **/*.js --write && eslint . --fix",
-    "coverage": "nyc npm test",
-    "check-coverage": "nyc check-coverage"
+    "coverage": "c8 npm test",
+    "check-coverage": "c8 check-coverage"
   },
   "repository": "github:BonnierNews/lu-logger",
   "homepage": "https://github.com/BonnierNews/lu-logger",
@@ -39,14 +39,14 @@
     "winston-transport": "^4.5.0"
   },
   "devDependencies": {
+    "c8": "^8.0.1",
     "chai": "^4.3.7",
     "depcheck": "^1.4.3",
-    "eslint": "^8.38.0",
+    "eslint": "^8.45.0",
+    "eslint-config-exp": "^0.6.2",
     "eslint-plugin-json": "^3.1.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "mocha": "^10.1.0",
+    "mocha": "^10.2.0",
     "mocha-cakes-2": "^3.3.0",
-    "nyc": "^15.1.0",
     "prettier": "^3.0.0",
     "proxyquire": "^2.1.3"
   }

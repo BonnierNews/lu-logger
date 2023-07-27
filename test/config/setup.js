@@ -10,9 +10,7 @@ const chai = require("chai");
 chai.config.truncateThreshold = 0;
 chai.config.includeStack = true;
 
-Object.assign(global, {
-  should: chai.should()
-});
+Object.assign(global, { should: chai.should() });
 
-const {logger} = require("../../.");
+const { logger } = require("../../.");
 logger.add(require("../helpers/test-transport"));

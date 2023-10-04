@@ -11,6 +11,7 @@ const logLevels = require("./config/levels");
 const splatEntry = require("./lib/splat-entry");
 const cleanEntry = require("./lib/clean-entry");
 const stringify = require("./lib/stringify");
+const { debugMetaFormat, initDebugMetaMiddleware: initMiddleware, getDebugMeta } = require("./lib/debug-meta");
 
 const PromTransport = require("./lib/prom-transport");
 const maxMessageLength = 60 * 1024;
@@ -107,6 +108,7 @@ const logger = winston.createLogger({
     format(logLevel)(),
     format(location)(),
     format(metaDataFormat)(),
+    format(debugMetaFormat)(),
     formatter
   ),
 });
@@ -114,4 +116,5 @@ const logger = winston.createLogger({
 module.exports = {
   logger,
   buildLogger: logger.child.bind(logger),
+  debugMeta: { initMiddleware, getDebugMeta },
 };

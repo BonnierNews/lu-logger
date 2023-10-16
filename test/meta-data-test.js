@@ -1,6 +1,7 @@
 "use strict";
 
 const transport = require("./helpers/test-transport");
+const debugMeta = require("../lib/debug-meta");
 
 const proxyquire = require("proxyquire").noPreserveCache();
 
@@ -62,5 +63,31 @@ describe("logging messages with default metaData", () => {
     const log = transport.logs.shift();
     log.message.should.eql("some message one { true: false }");
     log.location.should.include("test/meta-data-test.js");
+  });
+
+  it("should log data from debugMetaMiddleware automatically", () => {
+    const logger = winston.child();
+
+    const middleware = debugMeta.initDebugMetaMiddleware((req) => req.debugMeta);
+
+    middleware({ debugMeta: { foo: "bar" } }, {}, () => {
+      logger.info("some message");
+    });
+    const log = transport.logs.shift();
+    log.message.should.eql("some message");
+    log.metaData.should.eql({ meta: { foo: "bar" } });
+  });
+
+  it("should merge data from debugMetaMiddleware and passed metadata", () => {
+    const logger = winston.child();
+
+    const middleware = debugMeta.initDebugMetaMiddleware((req) => req.debugMeta);
+
+    middleware({ debugMeta: { foo: "bar" } }, {}, () => {
+      logger.info("some message", { bar: "baz" });
+    });
+    const log = transport.logs.shift();
+    log.message.should.eql("some message");
+    log.metaData.should.eql({ meta: { foo: "bar", bar: "baz" } });
   });
 });

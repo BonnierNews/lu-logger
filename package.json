@@ -31,6 +31,7 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "@google-cloud/logging-winston": "^6.0.0",
     "exp-config": "^4.2.0",
     "lodash.isequal": "^4.5.0",
     "nock": "^13.2.9",

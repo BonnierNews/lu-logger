@@ -14,6 +14,10 @@ const stringify = require("./lib/stringify");
 const { debugMetaFormat, initDebugMetaMiddleware: initMiddleware, getDebugMeta } = require("./lib/debug-meta");
 
 const PromTransport = require("./lib/prom-transport");
+const { LoggingWinston } = require("@google-cloud/logging-winston");
+
+const loggingWinston = new LoggingWinston();
+
 const maxMessageLength = 60 * 1024;
 const config = appConfig.logging ?? {};
 
@@ -74,7 +78,7 @@ function defaultFormatter() {
   });
 }
 
-const transports = [ new PromTransport() ];
+const transports = [ new PromTransport(), loggingWinston ];
 
 if (config.log === "file") {
   transports.push(

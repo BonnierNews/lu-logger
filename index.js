@@ -14,10 +14,6 @@ const stringify = require("./lib/stringify");
 const { debugMetaFormat, initDebugMetaMiddleware: initMiddleware, getDebugMeta } = require("./lib/debug-meta");
 
 const PromTransport = require("./lib/prom-transport");
-const { LoggingWinston } = require("@google-cloud/logging-winston");
-
-const loggingWinston = new LoggingWinston();
-
 const maxMessageLength = 60 * 1024;
 const config = appConfig.logging ?? {};
 
@@ -78,7 +74,7 @@ function defaultFormatter() {
   });
 }
 
-const transports = [ new PromTransport(), loggingWinston ];
+const transports = [ new PromTransport() ];
 
 if (config.log === "file") {
   transports.push(
@@ -113,6 +109,15 @@ const logger = winston.createLogger({
     format(location)(),
     format(metaDataFormat)(),
     format(debugMetaFormat)(),
+    format((info) => {
+      let level = info.level.toUpperCase();
+      if (level === "VERBOSE") {
+        level = "DEBUG";
+      }
+
+      info.severity = level;
+      return info;
+    })(),
     formatter
   ),
 });

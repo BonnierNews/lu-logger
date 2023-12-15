@@ -100,15 +100,6 @@ const logger = winston.createLogger({
   exceptionHandlers: [ new winston.transports.Console() ],
   exitOnError: appConfig.envName !== "production",
   format: format.combine(
-    format((info) => {
-      let level = info.level.toUpperCase();
-      if (level === "VERBOSE") {
-        level = "DEBUG";
-      }
-
-      info.severity = level;
-      return info;
-    })(),
     format.metadata({ key: "metaData" }),
     format(splatEntry)(),
     format(truncateTooLong)(),
@@ -118,6 +109,15 @@ const logger = winston.createLogger({
     format(location)(),
     format(metaDataFormat)(),
     format(debugMetaFormat)(),
+    format((info) => {
+      let level = info.level.toUpperCase();
+      if (level === "VERBOSE") {
+        level = "DEBUG";
+      }
+
+      info.severity = level;
+      return info;
+    })(),
     formatter
   ),
 });

@@ -58,6 +58,16 @@ function metaDataFormat(info) {
   return info;
 }
 
+function addSeverity(info) {
+  let level = info.level.toUpperCase();
+  if (level === "VERBOSE") {
+    level = "DEBUG";
+  }
+
+  info.severity = level;
+  return info;
+}
+
 function defaultFormatter() {
   return format.printf((info) => {
     const meta = Object.keys(info).reduce(
@@ -109,6 +119,7 @@ const logger = winston.createLogger({
     format(location)(),
     format(metaDataFormat)(),
     format(debugMetaFormat)(),
+    format(addSeverity)(),
     formatter
   ),
 });

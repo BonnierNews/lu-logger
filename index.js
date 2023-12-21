@@ -87,9 +87,7 @@ function defaultFormatter() {
 const transports = [ new PromTransport() ];
 
 if (config.log === "file") {
-  transports.push(
-    new winston.transports.File({ filename: logFilename() })
-  );
+  transports.push(new winston.transports.File({ filename: logFilename() }));
 }
 
 if (config.log === "stdout") {

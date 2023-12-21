@@ -8,16 +8,15 @@
     "Markus Ekholm",
     "Jens Carlén"
   ],
-  "version": "7.2.0",
+  "version": "7.3.0",
   "engines": {
-    "node": ">=16 <=18",
-    "yarn": "please use npm"
+    "node": ">=16"
   },
   "scripts": {
     "test": "mocha --exit && eslint . --ext .js,.json --cache && depcheck",
     "posttest": "eslint --cache .",
     "lint": "eslint --cache .",
-    "format": "prettier **/*.js --write && eslint . --fix",
+    "format": "prettier {,**/,**/**,**/**/**}*.{js,json,md} --write && eslint . --fix",
     "coverage": "c8 npm test",
     "check-coverage": "c8 check-coverage"
   },

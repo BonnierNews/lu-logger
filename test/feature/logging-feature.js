@@ -328,7 +328,8 @@ Feature("Logging", () => {
   });
 
   Scenario("Strip token from log, calling an endpoint", () => {
-    const message = "HTTP GET, https://example.com/customer-token/v1/tokens/d589b307-a109-4fd1-b621-cc4d5d8f1f32, params: {\"something\": \"param\"}";
+    const message =
+      'HTTP GET, https://example.com/customer-token/v1/tokens/d589b307-a109-4fd1-b621-cc4d5d8f1f32, params: {"something": "param"}';
 
     When("logging a message with a URL containing tokens", () => {
       logger.debug(message);

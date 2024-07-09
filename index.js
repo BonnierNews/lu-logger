@@ -13,7 +13,6 @@ const cleanEntry = require("./lib/clean-entry");
 const stringify = require("./lib/stringify");
 const { debugMetaFormat, initDebugMetaMiddleware: initMiddleware, getDebugMeta } = require("./lib/debug-meta");
 
-const PromTransport = require("./lib/prom-transport");
 const maxMessageLength = 60 * 1024;
 const config = appConfig.logging ?? {};
 
@@ -84,7 +83,7 @@ function defaultFormatter() {
   });
 }
 
-const transports = [ new PromTransport() ];
+const transports = [];
 
 if (config.log === "file") {
   transports.push(new winston.transports.File({ filename: logFilename() }));

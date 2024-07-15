@@ -8,32 +8,18 @@ File name and line number of the log caller is also added when logging in debug 
 
 ## Configuration
 
-A configuration object must be passed to the constructor when initiating the logger.
+A configuration object must be present in `config/<environment>.json`.
 
 ### Example
 
-```js
-const logger = require("lu-logger")({
-  log: "stdout", // Or file, required
-  logLevel: "debug", // Minimum level to log
-  logJson: true, // Log JSON objects or string messages, defaults to true
-});
-```
-
-## Metrics
-
-All log events will also increment a counter `<metricPrefix>_logged_total` with the level as label.
-The `metricPrefix` will be automatically resolved from the calling applications `name` in package.json.
-If there is no `name` in package.json the `metricPrefix` will be `undefined`;
-
-Example of metrics produced:
-
-```
-# HELP orderapi_logged_total Counts number of logs with loglevel as label
-# TYPE orderapi_logged_total counter
-orderapi_logged_total{level="info"} 28
-orderapi_logged_total{level="error"} 39
-orderapi_logged_total{level="debug"} 2
+```json
+{
+  "loging": {
+    "log": "stdout", // Or file, required
+    "logLevel": "debug", // Minimum level to log
+    "logJson": true // Log JSON objects or string messages, defaults to true
+  }
+}
 ```
 
 ## Log output mode
@@ -49,12 +35,8 @@ The JSON below is an example of a log entry when `logJson` is set to true (or om
 
 ```json
 {
-  "data": {
-    "meta": "meta-data"
-  },
-  "greenFieldLogMeta": {
-    "location": "lib/logging-producer.js:38",
-    "correlationId": "sample-correlation-id"
+  "metaData": {
+    "correlationId": "some-epic-id"
   },
   "level": "debug",
   "message": "This is the log message",
@@ -81,8 +63,3 @@ const app = express();
 
 app.use(debugMeta.initMiddleware((req) => req.debugMeta));
 ```
-
-## Version notes:
-
-v2.x supports node 8,10 (but works at least to node 14)
-v3.x supports node 12,14,16

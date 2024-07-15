@@ -8,6 +8,7 @@ import { aliases, levels } from "./config/levels.js";
 import cleanEntry from "./lib/clean-entry.js";
 import stringify from "./lib/stringify.js";
 import { debugMetaFormat, initDebugMetaMiddleware as initMiddleware, getDebugMeta } from "./lib/debug-meta.js";
+import moveGcpFieldsToRoot from "./lib/gcp.js";
 
 const maxMessageLength = 60 * 1024;
 
@@ -100,6 +101,7 @@ export const logger = createLogger({
     format(logLevel)(),
     format(location)(),
     format(debugMetaFormat)(),
+    format(moveGcpFieldsToRoot)(),
     formatter
   ),
 });

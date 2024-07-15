@@ -1,9 +1,8 @@
-"use strict";
-
 const appConfig = require("exp-config");
 const fs = require("fs");
 const path = require("path");
 const winston = require("winston");
+
 const { format } = winston;
 
 const { getLoc } = require("./lib/get-loc");
@@ -102,7 +101,6 @@ const formatter = config.logJson ? format.json() : defaultFormatter();
 const logger = winston.createLogger({
   level: config.logLevel || "info",
   levels: logLevels.levels,
-  colors: logLevel.colors,
   transports,
   exceptionHandlers: [ new winston.transports.Console() ],
   exitOnError: appConfig.envName !== "production",

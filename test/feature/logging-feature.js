@@ -20,7 +20,6 @@ Feature("Logging", () => {
 
     Then("log output should be JSON", () => {
       const logContent = getLastLogAsJson();
-      logContent.logLevel.should.equal("debug");
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(message);
       logContent.location.should.be.ok;

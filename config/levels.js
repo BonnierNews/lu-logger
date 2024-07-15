@@ -7,6 +7,5 @@ export const levels = {
   info: 6,
   debug: 7,
 };
-export const aliases = { critical: "crit" };
 
-export default { levels, aliases };
+export default levels;

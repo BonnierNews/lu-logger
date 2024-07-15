@@ -3,23 +3,18 @@ import fs from "fs";
 import path from "path";
 import { transports as _transports, createLogger, format } from "winston";
 
-import { getLoc } from "./lib/get-loc.js";
-import { aliases, levels } from "./config/levels.js";
+import { levels } from "./config/levels.js";
 import cleanEntry from "./lib/clean-entry.js";
-import stringify from "./lib/stringify.js";
-import { debugMetaFormat, initDebugMetaMiddleware as initMiddleware, getDebugMeta } from "./lib/debug-meta.js";
+import { debugMetaFormat, getDebugMeta, initDebugMetaMiddleware as initMiddleware } from "./lib/debug-meta.js";
 import moveGcpFieldsToRoot from "./lib/gcp.js";
+import { getLoc } from "./lib/get-loc.js";
+import stringify from "./lib/stringify.js";
 
 const maxMessageLength = 60 * 1024;
 
 if (config?.logging?.truncateLog) {
   const fname = logFilename();
   if (fs.existsSync(fname)) fs.truncateSync(fname);
-}
-
-function logLevel(info) {
-  info.logLevel = aliases[info.level] || info.level;
-  return info;
 }
 
 function location(info) {
@@ -46,12 +41,7 @@ function truncateTooLong(info) {
 }
 
 function addSeverity(info) {
-  let level = info.level.toUpperCase();
-  if (level === "VERBOSE") {
-    level = "DEBUG";
-  }
-
-  info.severity = level;
+  info.severity = info.level.toUpperCase();
   return info;
 }
 
@@ -98,7 +88,6 @@ export const logger = createLogger({
     format(truncateTooLong)(),
     format(cleanEntry)(),
     format.timestamp(),
-    format(logLevel)(),
     format(location)(),
     format(debugMetaFormat)(),
     format(moveGcpFieldsToRoot)(),

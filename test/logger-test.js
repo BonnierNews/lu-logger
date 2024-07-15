@@ -25,19 +25,6 @@ describe("logger", () => {
         log.level.should.eql(level);
       });
     });
-    describe("logLevel aliases", () => {
-      it("should mark critical with crit", () => {
-        logger.critical("foobar");
-        const log = getLastLogAsJson();
-        log.logLevel.should.eql("crit");
-      });
-
-      it("should keep levels when no alias", () => {
-        logger.warning("foobar");
-        const log = getLastLogAsJson();
-        log.logLevel.should.eql("warning");
-      });
-    });
   });
 
   describe("metaData", () => {

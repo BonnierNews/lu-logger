@@ -1,9 +1,6 @@
-"use strict";
-
-const logLevels = -require("../config/levels");
-const transport = require("./helpers/test-transport");
-const should = require("chai").should();
-const proxyquire = require("proxyquire").noPreserveCache();
+import { levels as logLevels } from "../config/levels.js";
+import { getLastLogAsJson } from "./helpers/test-transport.js";
+import { logger } from "../index.js";
 
 describe("logger", () => {
   it("should log", () => {

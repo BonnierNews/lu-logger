@@ -1,9 +1,6 @@
-"use strict";
-
-const transport = require("./helpers/test-transport");
-const debugMeta = require("../lib/debug-meta");
-
-const proxyquire = require("proxyquire").noPreserveCache();
+import { getLastLogAsJson } from "./helpers/test-transport.js";
+import { initDebugMetaMiddleware } from "../lib/debug-meta.js";
+import { logger } from "../index.js";
 
 describe("logging messages with default metaData", () => {
   const data = {

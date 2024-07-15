@@ -1,11 +1,7 @@
-"use strict";
+import config from "exp-config";
 
-const transport = require("../helpers/test-transport");
-const prometheusClient = require("prom-client");
-const proxyquire = require("proxyquire").noPreserveCache();
-
-const basePkg = require("../../package.json");
-const nock = require("nock");
+import { logger } from "../../index.js";
+import { getLastLogAsJson } from "../helpers/test-transport.js";
 
 Feature("Logging", () => {
   Scenario("Logging debug with JSON format", () => {

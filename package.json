@@ -28,6 +28,7 @@
     "logger"
   ],
   "license": "MIT",
+  "type": "module",
   "main": "index.js",
   "dependencies": {
     "exp-config": "^4.2.0",

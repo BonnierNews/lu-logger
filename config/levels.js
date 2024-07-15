@@ -1,6 +1,4 @@
-"use strict";
-
-const levels = {
+export const levels = {
   alert: 1,
   critical: 2,
   error: 3,
@@ -9,10 +7,6 @@ const levels = {
   info: 6,
   debug: 7,
 };
-const aliases = { critical: "crit" };
+export const aliases = { critical: "crit" };
 
-module.exports = {
-  levels,
-  aliases,
-  colors,
-};
+export default { levels, aliases };

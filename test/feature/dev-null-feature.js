@@ -1,8 +1,4 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
-const basePkg = require("../../package.json");
-const nock = require("nock");
+import { logger } from "../../index.js";
 
 Feature("Logging", () => {
   Scenario("Logging debug with JSON format", () => {

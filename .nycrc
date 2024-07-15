@@ -1,9 +1,0 @@
-{
-  "reporter": [
-    "text"
-  ],
-  "statements": "88",
-  "branches": "76",
-  "functions": "78",
-  "lines": "88"
-}

@@ -12,10 +12,12 @@ import stringify from "./lib/stringify.js";
 
 const maxMessageLength = 60 * 1024;
 
+/* c8 ignore start We only use the file transport in tests */
 if (config?.logging?.truncateLog) {
   const fname = logFilename();
   if (fs.existsSync(fname)) fs.truncateSync(fname);
 }
+/* c8 ignore stop */
 
 function location(info) {
   info.location = getLoc();
@@ -44,7 +46,7 @@ function addSeverity(info) {
   info.severity = info.level.toUpperCase();
   return info;
 }
-
+/* c8 ignore start We only use this formatter for local development */
 function defaultFormatter() {
   return format.printf((info) => {
     const meta = Object.keys(info).reduce(
@@ -60,6 +62,7 @@ function defaultFormatter() {
     return `${info.timestamp} - ${info.level}: ${info.message}\t${stringify(meta)}`;
   });
 }
+/* c8 ignore stop */
 
 const transports = [];
 
@@ -67,6 +70,7 @@ switch (config?.logging?.log) {
   case "file":
     transports.push(new _transports.File({ filename: logFilename() }));
     break;
+  /* c8 ignore next 5 */
   case "stdout":
     transports.push(new _transports.Console());
     break;
@@ -74,10 +78,10 @@ switch (config?.logging?.log) {
     break;
 }
 
-const formatter = config?.logging?.logJson ? format.json() : defaultFormatter();
+const formatter = config?.logging?.logJson ? format.json() /* c8 ignore next */ : defaultFormatter();
 
 export const logger = createLogger({
-  level: config?.logging?.logLevel || "info",
+  level: config?.logging?.logLevel /* c8 ignore next */ || "info",
   levels,
   transports,
   exceptionHandlers: [ new _transports.Console() ],

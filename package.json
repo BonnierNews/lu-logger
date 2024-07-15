@@ -17,6 +17,7 @@
     "posttest": "eslint --cache .",
     "lint": "eslint --cache .",
     "format": "prettier {,**/,**/**,**/**/**}*.{js,json,md} --write && eslint . --fix",
+    "local-coverage": "c8 --reporter html npm test && c8 check-coverage || open ./coverage/index.html",
     "coverage": "c8 npm test",
     "check-coverage": "c8 check-coverage"
   },

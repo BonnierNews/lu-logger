@@ -8,27 +8,6 @@ const basePkg = require("../../package.json");
 const nock = require("nock");
 
 Feature("Logging", () => {
-  const mockedPkg = Object.assign({}, basePkg);
-
-  afterEachScenario(nock.cleanAll);
-
-  const { logger } = proxyquire("../..", { "./lib/prom-transport": proxyquire("../../lib/prom-transport", { [`${process.cwd()}/package.json`]: mockedPkg }) });
-  logger.add(transport);
-
-  before(() => {
-    transport.logs = [];
-  });
-
-  let config;
-  beforeEach(() => {
-    Object.assign(mockedPkg, basePkg);
-    config = require("exp-config");
-  });
-
-  afterEach(() => {
-    config = require("exp-config");
-  });
-
   Scenario("Logging debug with JSON format", () => {
     const message = "Message";
     const data = {
@@ -44,7 +23,7 @@ Feature("Logging", () => {
     });
 
     Then("log output should be JSON", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.logLevel.should.equal("debug");
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(message);
@@ -67,7 +46,7 @@ Feature("Logging", () => {
     });
 
     Then("log output should be a message that it is too big to log", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal("too big to log");
     });
@@ -92,7 +71,7 @@ Feature("Logging", () => {
     });
 
     Then("log output should be a message that it is too big to log", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal("too big to log");
     });
@@ -117,7 +96,7 @@ Feature("Logging", () => {
     });
 
     Then("log output should be the first 60 * 1024 bytes of the message", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(`${message.substring(0, 60 * 1024 - 3)}...`);
     });
@@ -142,7 +121,7 @@ Feature("Logging", () => {
     });
 
     Then("log output should be the first 60 * 1024 bytes of the message", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.metaData.should.deep.equal(data);
       logContent.message.should.equal(`${message.substring(0, 60 * 1024 - 3)}...`);
     });
@@ -150,43 +129,40 @@ Feature("Logging", () => {
 
   Scenario("Logging an api-key as message", () => {
     const message = "x-api-key:8a1ba457-24bc-4941-b136-d401a717c223";
-    const data = "some-data";
 
     When("logging a message with an API Key", () => {
-      logger.debug(message, data);
+      logger.debug(message);
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
-      logContent.message.should.equal("x-api-key:SECRET some-data");
+      const logContent = getLastLogAsJson();
+      logContent.message.should.equal("x-api-key:SECRET");
     });
   });
 
   Scenario("Logging a message including basic auth", () => {
     const message = "amqp://user:password@example.com/some-path";
-    const data = "some-data";
 
     When("logging a message with an API Key", () => {
-      logger.debug(message, data);
+      logger.debug(message);
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
-      logContent.message.should.equal("amqp://uxxx:SECRET@example.com/some-path some-data");
+      const logContent = getLastLogAsJson();
+      logContent.message.should.equal("amqp://uxxx:SECRET@example.com/some-path");
     });
   });
 
   Scenario("Logging a message including basic auth and an email", () => {
-    const message = "amqp://user:password@example.com/some-path";
-    const data = '{"email":"test@example.com"}';
+    const message = 'amqp://user:password@example.com/some-path email: "test@example.com"';
 
     When("logging a message with an API Key", () => {
-      logger.debug(message, data);
+      logger.debug(message);
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
-      logContent.message.should.equal('amqp://uxxx:SECRET@example.com/some-path {"email":"txxx@example.com"}');
+      const logContent = getLastLogAsJson();
+      logContent.message.should.equal('amqp://uxxx:SECRET@example.com/some-path email: "txxx@example.com"');
     });
   });
 
@@ -210,11 +186,11 @@ Feature("Logging", () => {
     });
 
     When("logging a message with a response from credentials", () => {
-      logger.debug(message, data);
+      logger.debug(`${message} ${data}`);
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.message.should.equal(
         'HTTP response for POST https://bn-credentials-production.bnu.bn.nr/credentials/user-lookup {"id":"dn://splus/12345678","type":"credentials__user","attributes":{"userId":"dn://splus/12345678","email":"sxxx@something.com","verifiedEmail":true,"lastLogin":"2023-07-02T10:28:10.625Z","lastActive":"2023-07-02T10:28:10.625Z","properties":{"firstName":"Sxxx","lastName":"Nxxx"}},"meta":{"correlationId":"9916b873-96e6-44ef-9ef9-529e488907e5"}}'
       );
@@ -224,33 +200,29 @@ Feature("Logging", () => {
   Scenario("Logging an auth object as message", () => {
     const message =
       '{"auth":{"user":"some-user","pass":"some-password"},"correlationId":"e91c70da-5156-1234-5678-451e863c1639"}';
-    const data = "some-data";
 
     When("logging a message with an auth string", () => {
-      logger.debug(message, data);
+      logger.debug(message);
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
-      logContent.message.should.equal(
-        '{"auth":"SECRET","correlationId":"e91c70da-5156-1234-5678-451e863c1639"} some-data'
-      );
+      const logContent = getLastLogAsJson();
+      logContent.message.should.equal('{"auth":"SECRET","correlationId":"e91c70da-5156-1234-5678-451e863c1639"}');
     });
   });
 
   Scenario("Logging an auth object as message, with escaped quotes", () => {
     const message =
       '{\\"auth\\":{\\"user\\":\\"some-user\\",\\"pass\\":\\"some-password\\"},\\"correlationId\\":\\"e91c70da-5156-1234-5678-451e863c1639\\"}';
-    const data = "some-data";
 
     When("logging a message with an auth string", () => {
-      logger.debug(message, data);
+      logger.debug(message);
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.message.should.equal(
-        '{\\"auth\\":\\"SECRET\\",\\"correlationId\\":\\"e91c70da-5156-1234-5678-451e863c1639\\"} some-data'
+        '{\\"auth\\":\\"SECRET\\",\\"correlationId\\":\\"e91c70da-5156-1234-5678-451e863c1639\\"}'
       );
     });
   });
@@ -263,7 +235,7 @@ Feature("Logging", () => {
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.message.should.equal('"x-api-key":"SECRET"');
     });
   });
@@ -277,7 +249,7 @@ Feature("Logging", () => {
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.message.should.equal(
         '{"offerCode":"some-offer","email":"sxxx@example.com","firstName":"Jxxx","lastName":"Bxxx","correlationId":"e91c70da-5156-1234-5678-451e863c1639"}'
       );
@@ -286,15 +258,14 @@ Feature("Logging", () => {
 
   Scenario("Strip token from log", () => {
     const message =
-      "/_api/v2/expressen/token/d589b307-a109-4fd1-b621-cc4d5d8f1f32/ {token:d589b307-a109-4fd1-b621-cc4d5d8f1f32}";
-    const data = '{"token":"d589b307-a109-4fd1-b621-cc4d5d8f1f32"}';
+      '/_api/v2/expressen/token/d589b307-a109-4fd1-b621-cc4d5d8f1f32/ {token:d589b307-a109-4fd1-b621-cc4d5d8f1f32} {"token":"d589b307-a109-4fd1-b621-cc4d5d8f1f32"}';
 
     When("logging a message with some tokens in it", () => {
-      logger.debug(message, data);
+      logger.debug(message);
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.message.should.equal('/_api/v2/expressen/token/SECRET/ {token:SECRET} {"token":"SECRET"}');
     });
   });
@@ -308,7 +279,7 @@ Feature("Logging", () => {
     });
 
     Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
+      const logContent = getLastLogAsJson();
       logContent.message.should.equal(
         'HTTP GET, https://example.com/customer-token/v1/tokens/SECRET, params: {"something": "param"}'
       );

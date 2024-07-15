@@ -1,22 +1,27 @@
-"use strict";
+import { Writable } from "stream";
+import { transports } from "winston";
 
-const Transport = require("winston-transport");
-class CustomTransport extends Transport {
-  constructor(opts) {
-    super(opts);
-    this.name = "test-transport";
-    this.logs = [];
-  }
-  log(info, callback) {
-    let message = info.message;
-    if (!message) {
-      message = info[Symbol.for("message")];
-      info._message = message;
-      message = JSON.parse(message)["@message"];
-    }
-    this.logs.push({ ...info, message });
-    callback();
-  }
+let output = "";
+const stream = new Writable();
+stream._write = (chunk, encoding, next) => {
+  output = output += chunk.toString();
+  next();
+};
+
+export const transport = new transports.Stream({ stream });
+
+export function getAllLogs() {
+  return output.trim().split("\n");
 }
 
-module.exports = new CustomTransport();
+export function getLastLog() {
+  return getAllLogs().pop();
+}
+
+export function getLastLogAsJson() {
+  return JSON.parse(getLastLog());
+}
+
+export function reset() {
+  output = "";
+}

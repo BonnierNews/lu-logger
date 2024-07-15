@@ -6,23 +6,16 @@ const should = require("chai").should();
 const proxyquire = require("proxyquire").noPreserveCache();
 
 describe("logger", () => {
-  const { logger } = proxyquire("../", {});
-  logger.add(transport);
-
-  before(() => {
-    transport.logs = [];
-  });
-
   it("should log", () => {
     logger.info("foobar");
-    const log = transport.logs.shift();
+    const log = getLastLogAsJson();
     log.should.include({ level: "info", message: "foobar" });
     log.metaData.should.eql({});
   });
 
   it("should log with meta", () => {
     logger.info("some message", { some: "info" });
-    const log = transport.logs.shift();
+    const log = getLastLogAsJson();
     log.should.include({ level: "info", message: "some message" });
     log.metaData.should.eql({ meta: { some: "info" } });
   });
@@ -31,21 +24,20 @@ describe("logger", () => {
     Object.keys(logLevels).forEach((level) => {
       it(`should log ${level}`, () => {
         logger.log(level, "message");
-        const log = transport.logs.shift();
-        should.exist(log);
+        const log = getLastLogAsJson();
         log.level.should.eql(level);
       });
     });
     describe("logLevel aliases", () => {
       it("should mark critical with crit", () => {
         logger.critical("foobar");
-        const log = transport.logs.shift();
+        const log = getLastLogAsJson();
         log.logLevel.should.eql("crit");
       });
 
       it("should keep levels when no alias", () => {
         logger.warning("foobar");
-        const log = transport.logs.shift();
+        const log = getLastLogAsJson();
         log.logLevel.should.eql("warning");
       });
     });
@@ -61,7 +53,7 @@ describe("logger", () => {
         },
       };
       logger.info("message", data);
-      const log = transport.logs.shift();
+      const log = getLastLogAsJson();
       log.metaData.should.eql(data);
     });
 
@@ -72,7 +64,7 @@ describe("logger", () => {
         correlationId: "sample-correlation-id",
       };
       logger.info("message", data);
-      const log = transport.logs.shift();
+      const log = getLastLogAsJson();
       log.metaData.should.eql({ meta: data });
     });
   });
@@ -80,7 +72,7 @@ describe("logger", () => {
   describe("location", () => {
     it("should log location", () => {
       logger.info("message");
-      const log = transport.logs.shift();
+      const log = getLastLogAsJson();
       log.location.should.include("test/logger-test.js");
     });
   });

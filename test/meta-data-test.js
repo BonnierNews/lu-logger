@@ -39,7 +39,7 @@ describe("logging messages with default metaData", () => {
     });
     const log = getLastLogAsJson();
     log.message.should.eql("some message");
-    log.metaData.should.eql({ meta: { foo: "bar" } });
+    log.metaData.should.eql({ foo: "bar" });
   });
 
   it("should merge data from debugMetaMiddleware and passed metadata", () => {
@@ -50,6 +50,6 @@ describe("logging messages with default metaData", () => {
     });
     const log = getLastLogAsJson();
     log.message.should.eql("some message");
-    log.metaData.should.eql({ meta: { foo: "bar", bar: "baz" } });
+    log.metaData.should.eql({ foo: "bar", bar: "baz" });
   });
 });

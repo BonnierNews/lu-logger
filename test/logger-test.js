@@ -10,11 +10,11 @@ describe("logger", () => {
     log.metaData.should.eql({});
   });
 
-  it("should log with meta", () => {
+  it("should log with metadata", () => {
     logger.info("some message", { some: "info" });
     const log = getLastLogAsJson();
     log.should.include({ level: "info", message: "some message" });
-    log.metaData.should.eql({ meta: { some: "info" } });
+    log.metaData.should.eql({ some: "info" });
   });
 
   describe("levels", () => {
@@ -62,7 +62,7 @@ describe("logger", () => {
       };
       logger.info("message", data);
       const log = getLastLogAsJson();
-      log.metaData.should.eql({ meta: data });
+      log.metaData.should.eql(data);
     });
   });
 

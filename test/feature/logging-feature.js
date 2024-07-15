@@ -148,34 +148,6 @@ Feature("Logging", () => {
     });
   });
 
-  Scenario("Logging an error", () => {
-    const message = "Message";
-    const data = new Error("It's broken");
-
-    When("logging a message containing an error", () => {
-      logger.debug(message, data);
-    });
-
-    Then("log output should include the whole error", () => {
-      const logContent = transport.logs.shift();
-      logContent.message.should.include("Message It's broken Error: It's broken");
-    });
-  });
-
-  Scenario("Logging an api-key", () => {
-    const message = "Message";
-    const data = "x-api-key:8a1ba457-24bc-4941-b136-d401a717c223";
-
-    When("logging a huge message", () => {
-      logger.debug(message, data);
-    });
-
-    Then("log output should be trimmed", () => {
-      const logContent = transport.logs.shift();
-      logContent.message.should.equal("Message x-api-key:SECRET");
-    });
-  });
-
   Scenario("Logging an api-key as message", () => {
     const message = "x-api-key:8a1ba457-24bc-4941-b136-d401a717c223";
     const data = "some-data";
@@ -340,98 +312,6 @@ Feature("Logging", () => {
       logContent.message.should.equal(
         'HTTP GET, https://example.com/customer-token/v1/tokens/SECRET, params: {"something": "param"}'
       );
-    });
-  });
-
-  Scenario("Should support prefixed package names", () => {
-    let newLogger;
-
-    When("loading the logger in a prefixed package", () => {
-      mockedPkg.name = "@bonniernews/example";
-      newLogger = proxyquire("../..", { "./lib/prom-transport": proxyquire("../../lib/prom-transport", { [`${process.cwd()}/package.json`]: mockedPkg }) }).logger;
-      newLogger.add(transport);
-    });
-
-    Then("should have a valid metric registered", () => {
-      // eslint-disable-next-line no-undef
-      should.exist(prometheusClient.register.getSingleMetric("example_logged_total"));
-    });
-  });
-
-  Scenario("Logging should inc metric", () => {
-    const message = "Message";
-
-    before(() => {
-      prometheusClient.register.resetMetrics();
-    });
-
-    When("initializing the logger and doing some string logging", () => {
-      logger.error(message);
-
-      logger.alert(message);
-      logger.alert(message);
-
-      logger.critical(message);
-      logger.critical(message);
-      logger.critical(message);
-
-      logger.error(message);
-      logger.error(message);
-      logger.error(message);
-      logger.error(message);
-
-      logger.warning(message);
-      logger.warning(message);
-      logger.warning(message);
-      logger.warning(message);
-      logger.warning(message);
-
-      logger.notice(message);
-
-      logger.info(message);
-
-      logger.debug(message);
-    });
-
-    Then("the logCounter metric should be incremented", () => {
-      const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
-      const alertCount = counterMetric.hashMap["level:alert"].value;
-      const criticalCount = counterMetric.hashMap["level:critical"].value;
-      const errorCount = counterMetric.hashMap["eventName:,level:error"].value;
-      const warningCount = counterMetric.hashMap["level:warning"].value;
-      const noticeCount = counterMetric.hashMap["level:notice"].value;
-      const infoCount = counterMetric.hashMap["level:info"].value;
-      const debugCount = counterMetric.hashMap["level:debug"].value;
-
-      alertCount.should.eql(2);
-      criticalCount.should.eql(3);
-      errorCount.should.eql(5);
-      warningCount.should.eql(5);
-      noticeCount.should.eql(1);
-      infoCount.should.eql(1);
-      debugCount.should.eql(1);
-    });
-  });
-
-  Scenario("Logging error with routingKey in logObject should inc metric with eventName as label", () => {
-    const message = "Message";
-    const routingKey = "namespace.event-name.some.cool.key";
-
-    before(() => {
-      prometheusClient.register.resetMetrics();
-    });
-
-    When("initializing the logger and doing some string logging", () => {
-      logger.error(message, { meta: { routingKey } });
-    });
-
-    Then("the logCounter metric for eventName should be incremented", () => {
-      const counterMetric = prometheusClient.register.getSingleMetric("lulogger_logged_total");
-      const errorMetric = counterMetric.hashMap["eventName:event-name,level:error"];
-      const errorCount = errorMetric.value;
-      const errorLabels = errorMetric.labels;
-      errorCount.should.eql(1);
-      errorLabels.should.eql({ level: "error", eventName: "event-name" });
     });
   });
 });

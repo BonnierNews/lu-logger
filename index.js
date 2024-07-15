@@ -109,7 +109,6 @@ const logger = winston.createLogger({
   format: format.combine(
     format.metadata({ key: "metaData" }),
     format(addSeverity)(),
-    format(splatEntry)(),
     format(truncateTooLong)(),
     format(cleanEntry)(),
     format.timestamp(),

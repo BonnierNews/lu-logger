@@ -27,44 +27,6 @@ describe("logger", () => {
     log.metaData.should.eql({ meta: { some: "info" } });
   });
 
-  it("should log splat multiple arguments with meta", () => {
-    logger.info("one", "two", "three", "four", { some: "info" });
-    const log = transport.logs.shift();
-    log.should.include({ level: "info", message: "one two three four" });
-    log.metaData.should.eql({ meta: { some: "info" } });
-  });
-
-  it("should log splat multiple arguments without meta", () => {
-    logger.info("one", "two", "three", "four");
-    const log = transport.logs.shift();
-    log.should.include({ level: "info", message: "one two three four" });
-    log.metaData.should.eql({});
-  });
-
-  it("should log splat multiple objects with meta", () => {
-    logger.info("one", "two", { three: 3, four: 4 }, { correlationId: "coobar" });
-    const log = transport.logs.shift();
-    log.should.include({
-      level: "info",
-      message: "one two { three: 3, four: 4 }",
-    });
-    log.metaData.should.eql({ meta: { correlationId: "coobar" } });
-  });
-
-  it("should splat stringformatted messages when metadata", () => {
-    const data = { meta: { correlationId: "someCorrelationId" } };
-    const routingKey = "key";
-    const listener = "listenerFn";
-    const message = {
-      id: "someid",
-      type: "message-type",
-    };
-    logger.info(`routingKey: ${routingKey}, listener ${listener}, message %j`, message, data);
-    const log = transport.logs.shift();
-    log.message.should.eql('routingKey: key, listener listenerFn, message {"id":"someid","type":"message-type"}');
-    log.metaData.should.eql(data);
-  });
-
   describe("levels", () => {
     Object.keys(logLevels).forEach((level) => {
       it(`should log ${level}`, () => {
@@ -112,53 +74,6 @@ describe("logger", () => {
       logger.info("message", data);
       const log = transport.logs.shift();
       log.metaData.should.eql({ meta: data });
-    });
-
-    it("should log data and metadata with only one", () => {
-      const data = { correlationId: "sample-correlation-id" };
-      logger.info("message", { one: 1 }, { some: "data" }, data);
-      const log = transport.logs.shift();
-      log.message.should.eql("message { one: 1 } { some: 'data' }");
-      log.metaData.should.eql({ meta: data });
-    });
-
-    it("should log data and metadata multiple", () => {
-      const data = { correlationId: "sample-correlation-id" };
-      logger.info("message", { one: 1 }, data);
-      const log = transport.logs.shift();
-      log.message.should.eql("message { one: 1 }");
-      log.metaData.should.eql({ meta: data });
-    });
-
-    it("should format log with metaData", () => {
-      const data = { correlationId: "sample-correlation-id" };
-      const routingKey = "baz";
-      const listener = "foo";
-      const message = {
-        id: "cd059ff6-c72d-4fa1-9886-f7be64ba3c51",
-        type: "event",
-      };
-      logger.info(`routingKey: ${routingKey}, listener ${listener}, message %j`, message, data);
-      const log = transport.logs.shift();
-      log.message.should.eql(
-        'routingKey: baz, listener foo, message {"id":"cd059ff6-c72d-4fa1-9886-f7be64ba3c51","type":"event"}'
-      );
-      log.metaData.should.eql({ meta: data });
-    });
-
-    it("should format log witout metaData", () => {
-      const routingKey = "baz";
-      const listener = "foo";
-      const message = {
-        id: "cd059ff6-c72d-4fa1-9886-f7be64ba3c51",
-        type: "event",
-      };
-      logger.info(`routingKey: ${routingKey}, listener ${listener}, message %j`, message);
-      const log = transport.logs.shift();
-      log.message.should.eql(
-        'routingKey: baz, listener foo, message {"id":"cd059ff6-c72d-4fa1-9886-f7be64ba3c51","type":"event"}'
-      );
-      log.metaData.should.eql({});
     });
   });
 

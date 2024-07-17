@@ -1,31 +1,23 @@
-"use strict";
+import config from "exp-config";
+import fs from "fs";
+import path from "path";
+import { transports as _transports, createLogger, format } from "winston";
 
-const appConfig = require("exp-config");
-const fs = require("fs");
-const path = require("path");
-const winston = require("winston");
-const { format } = winston;
+import { levels } from "./config/levels.js";
+import cleanEntry from "./lib/clean-entry.js";
+import { debugMetaFormat, getDebugMeta, initDebugMetaMiddleware as initMiddleware } from "./lib/debug-meta.js";
+import moveGcpFieldsToRoot from "./lib/gcp.js";
+import { getLoc } from "./lib/get-loc.js";
+import stringify from "./lib/stringify.js";
 
-const { getLoc } = require("./lib/get-loc");
-const logLevels = require("./config/levels");
-const splatEntry = require("./lib/splat-entry");
-const cleanEntry = require("./lib/clean-entry");
-const stringify = require("./lib/stringify");
-const { debugMetaFormat, initDebugMetaMiddleware: initMiddleware, getDebugMeta } = require("./lib/debug-meta");
-
-const PromTransport = require("./lib/prom-transport");
 const maxMessageLength = 60 * 1024;
-const config = appConfig.logging ?? {};
 
-if (config.truncateLog) {
+/* c8 ignore start We only use the file transport in tests */
+if (config?.logging?.truncateLog) {
   const fname = logFilename();
   if (fs.existsSync(fname)) fs.truncateSync(fname);
 }
-
-function logLevel(info) {
-  info.logLevel = logLevels.aliases[info.level] || info.level;
-  return info;
-}
+/* c8 ignore stop */
 
 function location(info) {
   info.location = getLoc();
@@ -33,12 +25,12 @@ function location(info) {
 }
 
 function logFilename() {
-  return path.join(process.cwd(), "logs", `${appConfig.envName}.log`);
+  return path.join(process.cwd(), "logs", `${config.envName}.log`);
 }
 
 function truncateTooLong(info) {
   if (Buffer.byteLength(info.message, "utf8") > maxMessageLength) {
-    switch (appConfig.handleBigLogs) {
+    switch (config.handleBigLogs) {
       case "truncate":
         info.message = `${info.message.substring(0, maxMessageLength - 3)}...`;
         break;
@@ -50,24 +42,11 @@ function truncateTooLong(info) {
   return info;
 }
 
-function metaDataFormat(info) {
-  const meta = info.metaData && info.metaData.meta;
-  if (!meta && Object.keys(info.metaData).length > 0) {
-    info.metaData = { meta: info.metaData };
-  }
-  return info;
-}
-
 function addSeverity(info) {
-  let level = info.level.toUpperCase();
-  if (level === "VERBOSE") {
-    level = "DEBUG";
-  }
-
-  info.severity = level;
+  info.severity = info.level.toUpperCase();
   return info;
 }
-
+/* c8 ignore start We only use this formatter for local development */
 function defaultFormatter() {
   return format.printf((info) => {
     const meta = Object.keys(info).reduce(
@@ -83,47 +62,49 @@ function defaultFormatter() {
     return `${info.timestamp} - ${info.level}: ${info.message}\t${stringify(meta)}`;
   });
 }
+/* c8 ignore stop */
 
-const transports = [ new PromTransport() ];
+const transports = [];
 
-if (config.log === "file") {
-  transports.push(new winston.transports.File({ filename: logFilename() }));
+switch (config?.logging?.log) {
+  case "file":
+    transports.push(new _transports.File({ filename: logFilename() }));
+    break;
+  /* c8 ignore next 5 */
+  case "stdout":
+    transports.push(new _transports.Console());
+    break;
+  case "/dev/null":
+    break;
 }
 
-if (config.log === "stdout") {
-  transports.push(new winston.transports.Console());
-}
+const formatter = config?.logging?.logJson ? format.json() /* c8 ignore next */ : defaultFormatter();
 
-if (config.log === "/dev/null") {
-  transports.length = 0;
-}
-
-const formatter = config.logJson ? format.json() : defaultFormatter();
-
-const logger = winston.createLogger({
-  level: config.logLevel || "info",
-  levels: logLevels.levels,
-  colors: logLevel.colors,
+export const logger = createLogger({
+  level: config?.logging?.logLevel /* c8 ignore next */ || "info",
+  levels,
   transports,
-  exceptionHandlers: [ new winston.transports.Console() ],
-  exitOnError: appConfig.envName !== "production",
+  exceptionHandlers: [ new _transports.Console() ],
+  exitOnError: config.envName !== "production",
   format: format.combine(
     format.metadata({ key: "metaData" }),
     format(addSeverity)(),
-    format(splatEntry)(),
     format(truncateTooLong)(),
     format(cleanEntry)(),
     format.timestamp(),
-    format(logLevel)(),
     format(location)(),
-    format(metaDataFormat)(),
     format(debugMetaFormat)(),
+    format(moveGcpFieldsToRoot)(),
     formatter
   ),
 });
 
-module.exports = {
+export const buildLogger = logger.child.bind(logger);
+
+export const debugMeta = { initMiddleware, getDebugMeta };
+
+export default {
   logger,
-  buildLogger: logger.child.bind(logger),
-  debugMeta: { initMiddleware, getDebugMeta },
+  buildLogger,
+  debugMeta,
 };

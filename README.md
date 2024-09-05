@@ -1,3 +1,9 @@
+# DEPRECATED
+
+As of September 2024 this package is deprecated and will receive no further updates.
+
+Any internal changes should be made directly in `lu-greenfield`.
+
 # lu-logger
 
 ![Node.js CI](https://github.com/BonnierNews/lu-logger/actions/workflows/nodejs.yml/badge.svg)
